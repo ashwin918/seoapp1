@@ -1,0 +1,90 @@
+<% const title='Add Website' ; const active='add-website' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header">
+                            <h1 class="page-title">Add Website</h1>
+                            <p class="page-description">Add a new website to track and manage its SEO.</p>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <div class="card" style="max-width: 600px;">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fas fa-plus-circle"></i>
+                                        Website Details
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/websites/add" method="POST">
+                                        <div class="form-group">
+                                            <label for="url" class="form-label">Website URL *</label>
+                                            <input type="text" id="url" name="url" class="form-control"
+                                                placeholder="https://example.com" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="name" class="form-label">Website Name</label>
+                                            <input type="text" id="name" name="name" class="form-control"
+                                                placeholder="My Awesome Website">
+                                            <small class="text-muted">If left empty, we'll use the domain name.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="platform" class="form-label">Platform</label>
+                                            <select id="platform" name="platform" class="form-control">
+                                                <option value="">Select platform (optional)</option>
+                                                <option value="wordpress">WordPress</option>
+                                                <option value="shopify">Shopify</option>
+                                                <option value="github">GitHub Pages</option>
+                                                <option value="custom">Custom / Other</option>
+                                            </select>
+                                        </div>
+
+                                        <% if (connectedAccounts.length> 0) { %>
+                                            <div class="form-group">
+                                                <label for="connectedAccountId" class="form-label">Connected
+                                                    Account</label>
+                                                <select id="connectedAccountId" name="connectedAccountId"
+                                                    class="form-control">
+                                                    <option value="">No connection (manual management)</option>
+                                                    <% connectedAccounts.forEach(function(account) { %>
+                                                        <option value="<%= account.id %>">
+                                                            <%= account.provider.charAt(0).toUpperCase() +
+                                                                account.provider.slice(1) %>: <%= account.account_name
+                                                                    %>
+                                                        </option>
+                                                        <% }); %>
+                                                </select>
+                                                <small class="text-muted">Link this website to a connected account for
+                                                    automatic SEO updates.</small>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="alert alert-info">
+                                                    <i class="fas fa-info-circle alert-icon"></i>
+                                                    <div class="alert-content">
+                                                        <a href="/oauth">Connect an account</a> (GitHub, WordPress, or
+                                                        Shopify) to enable automatic SEO updates.
+                                                    </div>
+                                                </div>
+                                                <% } %>
+
+                                                    <div style="display: flex; gap: 1rem;">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fas fa-plus"></i>
+                                                            Add Website
+                                                        </button>
+                                                        <a href="/websites" class="btn btn-secondary">Cancel</a>
+                                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                    </main>
+            </div>
+
+            <%- include('../partials/footer') %>

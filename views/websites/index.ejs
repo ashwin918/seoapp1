@@ -1,0 +1,128 @@
+<% const title='Websites' ; const active='websites' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h1 class="page-title">My Websites</h1>
+                                <p class="page-description">Manage and monitor your connected websites.</p>
+                            </div>
+                            <a href="/websites/add" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Add Website
+                            </a>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <% if (websites.length===0) { %>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="empty-state">
+                                            <div class="empty-icon">
+                                                <i class="fas fa-globe"></i>
+                                            </div>
+                                            <p class="empty-title">No websites yet</p>
+                                            <p class="empty-description">Add your first website to start tracking its
+                                                SEO performance.</p>
+                                            <a href="/websites/add" class="btn btn-primary">
+                                                <i class="fas fa-plus"></i>
+                                                Add Website
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                    <div
+                                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                                        <% websites.forEach(function(website) { %>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div
+                                                        style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                                                        <div
+                                                            style="width: 48px; height: 48px; border-radius: var(--border-radius); background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; flex-shrink: 0;">
+                                                            <i class="fas fa-globe"></i>
+                                                        </div>
+                                                        <div style="flex: 1; min-width: 0;">
+                                                            <h4
+                                                                style="margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                <%= website.name %>
+                                                            </h4>
+                                                            <a href="<%= website.url %>" target="_blank"
+                                                                class="text-muted"
+                                                                style="font-size: 0.875rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                                <%= website.url %>
+                                                                    <i class="fas fa-external-link-alt"
+                                                                        style="margin-left: 0.25rem;"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                                                        <% if (website.provider) { %>
+                                                            <span class="badge badge-info">
+                                                                <i class="fab fa-<%= website.provider %>"></i>
+                                                                <%= website.provider.charAt(0).toUpperCase() +
+                                                                    website.provider.slice(1) %>
+                                                            </span>
+                                                            <% } %>
+                                                                <% if (website.platform) { %>
+                                                                    <span class="badge badge-neutral">
+                                                                        <%= website.platform %>
+                                                                    </span>
+                                                                    <% } %>
+                                                                        <% if (website.latest_score) { %>
+                                                                            <span
+                                                                                class="badge <%= website.latest_score >= 80 ? 'badge-success' : website.latest_score >= 60 ? 'badge-warning' : 'badge-danger' %>">
+                                                                                Score: <%= website.latest_score %>%
+                                                                            </span>
+                                                                            <% } %>
+                                                    </div>
+
+                                                    <div class="text-muted"
+                                                        style="font-size: 0.875rem; margin-bottom: 1rem;">
+                                                        <% if (website.last_analyzed) { %>
+                                                            Last analyzed: <%= new
+                                                                Date(website.last_analyzed).toLocaleDateString() %>
+                                                                <% } else { %>
+                                                                    Not analyzed yet
+                                                                    <% } %>
+                                                    </div>
+
+                                                    <div style="display: flex; gap: 0.5rem;">
+                                                        <a href="/websites/<%= website.id %>"
+                                                            class="btn btn-secondary btn-sm" style="flex: 1;">
+                                                            <i class="fas fa-eye"></i>
+                                                            View
+                                                        </a>
+                                                        <form action="/analyze" method="POST" style="flex: 1;">
+                                                            <input type="hidden" name="url" value="<%= website.url %>">
+                                                            <input type="hidden" name="websiteId"
+                                                                value="<%= website.id %>">
+                                                            <button type="submit" class="btn btn-primary btn-sm"
+                                                                style="width: 100%;">
+                                                                <i class="fas fa-search"></i>
+                                                                Analyze
+                                                            </button>
+                                                        </form>
+                                                        <a href="/seo/edit/<%= website.id %>"
+                                                            class="btn btn-secondary btn-sm">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                    </div>
+                                    <% } %>
+                    </main>
+            </div>
+
+            <%- include('../partials/footer') %>

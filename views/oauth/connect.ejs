@@ -1,0 +1,75 @@
+<% const title='Connect ' + provider; %>
+    <%- include('../partials/head') %>
+
+        <div class="auth-container">
+            <div class="auth-card card" style="max-width: 440px;">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <i class="fab <%= icon %>" style="color: <%= color %>;"></i>
+                    </div>
+                    <h1 class="auth-title">Connect <%= provider %>
+                    </h1>
+                    <p class="auth-subtitle">Enter your <%= provider %> details</p>
+                </div>
+
+                <div style="padding: 0 24px;">
+                    <%- include('../partials/flash') %>
+                </div>
+
+                <form action="/oauth/<%= providerSlug %>/callback" method="POST" class="auth-form">
+                    <input type="hidden" name="state" value="<%= state %>">
+
+                    <% if (providerSlug==='github' ) { %>
+                        <div class="form-group">
+                            <label for="username" class="form-label">GitHub Username</label>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="username"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountName" class="form-label">Display Name (optional)</label>
+                            <input type="text" id="accountName" name="accountName" class="form-control"
+                                placeholder="My GitHub">
+                        </div>
+                        <% } else if (providerSlug==='wordpress' ) { %>
+                            <div class="form-group">
+                                <label for="siteUrl" class="form-label">WordPress Site URL</label>
+                                <input type="text" id="siteUrl" name="siteUrl" class="form-control"
+                                    placeholder="yoursite.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" id="username" name="username" class="form-control"
+                                    placeholder="admin" required>
+                            </div>
+                            <% } else if (providerSlug==='shopify' ) { %>
+                                <div class="form-group">
+                                    <label for="storeName" class="form-label">Store Name</label>
+                                    <input type="text" id="storeName" name="storeName" class="form-control"
+                                        placeholder="my-store" required>
+                                    <small class="text-muted">your-store.myshopify.com</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="storeUrl" class="form-label">Custom URL (optional)</label>
+                                    <input type="text" id="storeUrl" name="storeUrl" class="form-control"
+                                        placeholder="www.yourstore.com">
+                                </div>
+                                <% } %>
+
+                                    <div class="alert alert-info" style="margin-bottom: 20px;">
+                                        <i class="fas fa-info-circle alert-icon"></i>
+                                        <div class="alert-content">This is a demo OAuth flow.</div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary"
+                                        style="width: 100%; margin-bottom: 12px;">
+                                        Connect <%= provider %>
+                                    </button>
+
+                                    <a href="/oauth" class="btn btn-secondary" style="width: 100%;">
+                                        Cancel
+                                    </a>
+                </form>
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>

@@ -1,0 +1,37 @@
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-content">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-search"></i>
+                SEO Bot
+            </a>
+
+            <% if (user) { %>
+                <ul class="navbar-nav">
+                    <li><a href="/dashboard"
+                            class="nav-link <%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+                    </li>
+                    <li><a href="/analyze"
+                            class="nav-link <%= typeof active !== 'undefined' && active === 'analyze' ? 'active' : '' %>">Analyze</a>
+                    </li>
+                    <li><a href="/websites"
+                            class="nav-link <%= typeof active !== 'undefined' && active === 'websites' ? 'active' : '' %>">Websites</a>
+                    </li>
+                </ul>
+
+                <div class="user-menu">
+                    <a href="/dashboard/settings" class="btn btn-ghost btn-sm"><i class="fas fa-cog"></i></a>
+                    <a href="/logout" class="btn btn-secondary btn-sm">Logout</a>
+                    <div class="user-avatar">
+                        <%= user.name.charAt(0).toUpperCase() %>
+                    </div>
+                </div>
+                <% } else { %>
+                    <div class="user-menu">
+                        <a href="/login" class="btn btn-ghost">Sign in</a>
+                        <a href="/register" class="btn btn-primary">Get started</a>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
+</nav>

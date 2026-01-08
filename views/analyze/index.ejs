@@ -1,0 +1,74 @@
+<% const title='Analyze' ; const active='analyze' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header">
+                            <h1 class="page-title">Analyze URL</h1>
+                            <p class="page-desc">Enter a URL to check its SEO health</p>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <div class="card" style="max-width: 550px;">
+                                <div class="card-body">
+                                    <form action="/analyze" method="POST" id="analyzeForm">
+                                        <div class="form-group">
+                                            <label for="url" class="form-label">Website URL</label>
+                                            <input type="text" id="url" name="url" class="form-control"
+                                                placeholder="example.com" required style="font-size: 1rem;">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn"
+                                            style="width: 100%;">
+                                            Check SEO
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="grid-3 mt-4">
+                                <div class="card">
+                                    <div class="card-body" style="text-align: center;">
+                                        <i class="fas fa-heading"
+                                            style="font-size: 1.3rem; color: var(--primary); margin-bottom: 8px;"></i>
+                                        <h4 style="font-size: 0.9rem; margin-bottom: 4px;">Title & Meta</h4>
+                                        <p class="text-muted" style="font-size: 0.8rem;">Page titles and descriptions
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body" style="text-align: center;">
+                                        <i class="fas fa-code"
+                                            style="font-size: 1.3rem; color: var(--green); margin-bottom: 8px;"></i>
+                                        <h4 style="font-size: 0.9rem; margin-bottom: 4px;">Technical</h4>
+                                        <p class="text-muted" style="font-size: 0.8rem;">Mobile, HTTPS, structured data
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body" style="text-align: center;">
+                                        <i class="fas fa-tachometer-alt"
+                                            style="font-size: 1.3rem; color: var(--yellow); margin-bottom: 8px;"></i>
+                                        <h4 style="font-size: 0.9rem; margin-bottom: 4px;">Performance</h4>
+                                        <p class="text-muted" style="font-size: 0.8rem;">Load time and speed</p>
+                                    </div>
+                                </div>
+                            </div>
+                    </main>
+            </div>
+
+            <script>
+                document.getElementById('analyzeForm').addEventListener('submit', function () {
+                    var btn = document.getElementById('analyzeBtn');
+                    btn.innerHTML = 'Analyzing...';
+                    btn.disabled = true;
+                });
+            </script>
+
+            <%- include('../partials/footer') %>

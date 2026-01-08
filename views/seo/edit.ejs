@@ -1,0 +1,268 @@
+<% const title='SEO Editor' ; const active='websites' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h1 class="page-title">SEO Editor</h1>
+                                <p class="page-desc">
+                                    <%= website.url %>
+                                </p>
+                            </div>
+                            <a href="/websites" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i>
+                                Back</a>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <% if (connectedAccount) { %>
+                                <div class="alert alert-success">
+                                    <i class="fas fa-plug"></i>
+                                    <span>Connected to <strong>
+                                            <%= connectedAccount.provider %>
+                                        </strong> - Changes can be pushed to your site</span>
+                                </div>
+                                <% } else { %>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>No platform connected. <a href="/oauth">Connect a platform</a> to push
+                                            changes</span>
+                                    </div>
+                                    <% } %>
+
+                                        <div class="grid-2 mb-4">
+                                            <!-- Suggestions -->
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-lightbulb"></i> Suggestions
+                                                    </h3>
+                                                    <button class="btn btn-secondary btn-sm" id="regenerateBtn"
+                                                        onclick="regenerateContent()">
+                                                        <i class="fas fa-sync"></i> Refresh
+                                                    </button>
+                                                </div>
+                                                <div class="card-body">
+                                                    <% if (aiSuggestions) { %>
+
+                                                        <% if (aiSuggestions.title && aiSuggestions.title.suggestions) {
+                                                            %>
+                                                            <div class="mb-4">
+                                                                <h4
+                                                                    style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;">
+                                                                    Title Options</h4>
+                                                                <% aiSuggestions.title.suggestions.forEach(function(s,
+                                                                    idx) { %>
+                                                                    <div style="padding: 10px; background: var(--bg-light); border-radius: var(--radius); margin-bottom: 6px; border-left: 3px solid var(--primary);"
+                                                                        data-type="title"
+                                                                        data-content="<%= encodeURIComponent(s.content) %>">
+                                                                        <div
+                                                                            style="display: flex; justify-content: space-between; gap: 10px;">
+                                                                            <div style="flex: 1;">
+                                                                                <p
+                                                                                    style="font-weight: 500; font-size: 0.9rem; margin-bottom: 4px;">
+                                                                                    <%= s.content %>
+                                                                                </p>
+                                                                                <span class="text-muted"
+                                                                                    style="font-size: 0.75rem;">
+                                                                                    <%= s.reason %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <button
+                                                                                class="btn btn-primary btn-sm apply-btn">Use</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <% }); %>
+                                                            </div>
+                                                            <% } %>
+
+                                                                <% if (aiSuggestions.meta_description &&
+                                                                    aiSuggestions.meta_description.suggestions) { %>
+                                                                    <div class="mb-4">
+                                                                        <h4
+                                                                            style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;">
+                                                                            Description Options</h4>
+                                                                        <% aiSuggestions.meta_description.suggestions.forEach(function(s,
+                                                                            idx) { %>
+                                                                            <div style="padding: 10px; background: var(--bg-light); border-radius: var(--radius); margin-bottom: 6px; border-left: 3px solid var(--green);"
+                                                                                data-type="meta_description"
+                                                                                data-content="<%= encodeURIComponent(s.content) %>">
+                                                                                <div
+                                                                                    style="display: flex; justify-content: space-between; gap: 10px;">
+                                                                                    <div style="flex: 1;">
+                                                                                        <p
+                                                                                            style="font-size: 0.85rem; margin-bottom: 4px;">
+                                                                                            <%= s.content %>
+                                                                                        </p>
+                                                                                        <span class="badge badge-gray">
+                                                                                            <%= s.length %> chars
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <button
+                                                                                        class="btn btn-success btn-sm apply-btn">Use</button>
+                                                                                </div>
+                                                                            </div>
+                                                                            <% }); %>
+                                                                    </div>
+                                                                    <% } %>
+
+                                                                        <% } else { %>
+                                                                            <div class="empty-state">
+                                                                                <div class="empty-icon"><i
+                                                                                        class="fas fa-lightbulb"></i>
+                                                                                </div>
+                                                                                <p class="empty-title">No suggestions
+                                                                                    yet</p>
+                                                                                <p class="text-muted"
+                                                                                    style="font-size: 0.85rem;">Click
+                                                                                    Refresh to generate suggestions</p>
+                                                                            </div>
+                                                                            <% } %>
+                                                </div>
+                                            </div>
+
+                                            <!-- Manual Edit -->
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-edit"></i> Custom Edit</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <form action="/seo/edit/<%= website.id %>" method="POST">
+                                                        <div class="form-group">
+                                                            <label class="form-label">Field</label>
+                                                            <select name="field_type" class="form-control" required>
+                                                                <option value="title">Title</option>
+                                                                <option value="meta_description">Meta Description
+                                                                </option>
+                                                                <option value="h1">H1 Heading</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="form-label">Current (optional)</label>
+                                                            <textarea name="old_value" class="form-control" rows="2"
+                                                                placeholder="Current value"></textarea>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="form-label">New Value</label>
+                                                            <textarea name="new_value" id="newValue"
+                                                                class="form-control" rows="3"
+                                                                placeholder="Enter new content" required></textarea>
+                                                            <small class="text-muted" id="charCount">0 chars</small>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-primary"
+                                                            style="width: 100%;">Save Change</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pending -->
+                                        <% if (pendingEdits.length> 0) { %>
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title"><i class="fas fa-clock"></i> Pending (<%=
+                                                            pendingEdits.length %>)</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Field</th>
+                                                                <th>New Value</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% pendingEdits.forEach(function(edit) { %>
+                                                                <tr>
+                                                                    <td><span class="badge badge-blue">
+                                                                            <%= edit.field_type %>
+                                                                        </span></td>
+                                                                    <td
+                                                                        style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">
+                                                                        <%= edit.new_value %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <form action="/seo/apply/<%= edit.id %>"
+                                                                            method="POST" style="display: inline;">
+                                                                            <button type="submit"
+                                                                                class="btn btn-success btn-sm">Push</button>
+                                                                        </form>
+                                                                        <form action="/seo/cancel/<%= edit.id %>"
+                                                                            method="POST" style="display: inline;">
+                                                                            <button type="submit"
+                                                                                class="btn btn-ghost btn-sm"><i
+                                                                                    class="fas fa-times"></i></button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }); %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                    </main>
+            </div>
+
+            <script>
+                var websiteId = '<%= website.id %>';
+
+                document.getElementById('newValue').addEventListener('input', function () {
+                    document.getElementById('charCount').textContent = this.value.length + ' chars';
+                });
+
+                document.querySelectorAll('.apply-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var parent = this.closest('[data-type]');
+                        var type = parent.getAttribute('data-type');
+                        var content = decodeURIComponent(parent.getAttribute('data-content'));
+
+                        if (confirm('Apply this suggestion?')) {
+                            fetch('/seo/apply-ai/' + websiteId, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ suggestion_type: type, suggestion_content: content })
+                            })
+                                .then(function (r) { return r.json(); })
+                                .then(function (data) {
+                                    if (data.success) {
+                                        alert(data.message);
+                                        location.reload();
+                                    } else {
+                                        alert('Error: ' + data.error);
+                                    }
+                                });
+                        }
+                    });
+                });
+
+                function regenerateContent() {
+                    var btn = document.getElementById('regenerateBtn');
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    btn.disabled = true;
+
+                    fetch('/seo/generate/' + websiteId, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (data.success) location.reload();
+                            else alert('Error: ' + data.error);
+                        })
+                        .finally(function () {
+                            btn.innerHTML = '<i class="fas fa-sync"></i> Refresh';
+                            btn.disabled = false;
+                        });
+                }
+            </script>
+
+            <%- include('../partials/footer') %>

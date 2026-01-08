@@ -1,0 +1,153 @@
+<% const title='Connections' ; const active='oauth' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header">
+                            <h1 class="page-title">Connections</h1>
+                            <p class="page-description">Connect your platforms to manage SEO directly</p>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <div class="provider-grid">
+                                <!-- GitHub -->
+                                <div class="card provider-card">
+                                    <div class="provider-icon github">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                    <div class="provider-info">
+                                        <div class="provider-name">GitHub</div>
+                                        <% const githubAccount=connectedAccounts.find(a=> a.provider === 'github');
+                                            %>
+                                            <% if (githubAccount) { %>
+                                                <div class="provider-status provider-connected">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <%= githubAccount.account_name %>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="provider-status">Not connected</div>
+                                                    <% } %>
+                                    </div>
+                                    <% if (githubAccount) { %>
+                                        <form action="/oauth/github/disconnect" method="POST">
+                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
+                                        </form>
+                                        <% } else { %>
+                                            <a href="/oauth/github" class="btn btn-primary btn-sm">Connect</a>
+                                            <% } %>
+                                </div>
+
+                                <!-- WordPress -->
+                                <div class="card provider-card">
+                                    <div class="provider-icon wordpress">
+                                        <i class="fab fa-wordpress"></i>
+                                    </div>
+                                    <div class="provider-info">
+                                        <div class="provider-name">WordPress</div>
+                                        <% const wordpressAccount=connectedAccounts.find(a=> a.provider ===
+                                            'wordpress');
+                                            %>
+                                            <% if (wordpressAccount) { %>
+                                                <div class="provider-status provider-connected">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <%= wordpressAccount.account_name %>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="provider-status">Not connected</div>
+                                                    <% } %>
+                                    </div>
+                                    <% if (wordpressAccount) { %>
+                                        <form action="/oauth/wordpress/disconnect" method="POST">
+                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
+                                        </form>
+                                        <% } else { %>
+                                            <a href="/oauth/wordpress" class="btn btn-primary btn-sm">Connect</a>
+                                            <% } %>
+                                </div>
+
+                                <!-- Shopify -->
+                                <div class="card provider-card">
+                                    <div class="provider-icon shopify">
+                                        <i class="fab fa-shopify"></i>
+                                    </div>
+                                    <div class="provider-info">
+                                        <div class="provider-name">Shopify</div>
+                                        <% const shopifyAccount=connectedAccounts.find(a=> a.provider === 'shopify');
+                                            %>
+                                            <% if (shopifyAccount) { %>
+                                                <div class="provider-status provider-connected">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <%= shopifyAccount.account_name %>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="provider-status">Not connected</div>
+                                                    <% } %>
+                                    </div>
+                                    <% if (shopifyAccount) { %>
+                                        <form action="/oauth/shopify/disconnect" method="POST">
+                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
+                                        </form>
+                                        <% } else { %>
+                                            <a href="/oauth/shopify" class="btn btn-primary btn-sm">Connect</a>
+                                            <% } %>
+                                </div>
+                            </div>
+
+                            <% if (connectedAccounts.length> 0) { %>
+                                <div class="card mt-4">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Connection Details</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Platform</th>
+                                                        <th>Account</th>
+                                                        <th>URL</th>
+                                                        <th>Connected</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% connectedAccounts.forEach(function(account) { %>
+                                                        <tr>
+                                                            <td>
+                                                                <span
+                                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                                    <i class="fab fa-<%= account.provider %>"></i>
+                                                                    <%= account.provider.charAt(0).toUpperCase() +
+                                                                        account.provider.slice(1) %>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <%= account.account_name %>
+                                                            </td>
+                                                            <td>
+                                                                <a href="<%= account.account_url %>" target="_blank"
+                                                                    class="text-muted">
+                                                                    <%= account.account_url.length> 30 ?
+                                                                        account.account_url.substring(0, 30) + '...' :
+                                                                        account.account_url %>
+                                                                </a>
+                                                            </td>
+                                                            <td class="text-muted">
+                                                                <%= new Date(account.connected_at).toLocaleDateString()
+                                                                    %>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                    </main>
+            </div>
+
+            <%- include('../partials/footer') %>

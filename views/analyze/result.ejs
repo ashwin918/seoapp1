@@ -1,0 +1,242 @@
+<% const title='Analysis Result' ; const active='analyze' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h1 class="page-title">SEO Report</h1>
+                                <p class="page-desc">
+                                    <%= analysis.url.length> 50 ? analysis.url.substring(0, 50) + '...' : analysis.url
+                                        %>
+                                </p>
+                            </div>
+                            <a href="/analyze" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> New
+                                Analysis</a>
+                        </div>
+
+                        <div class="grid-3 mb-4">
+                            <!-- Score -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="score-display">
+                                        <div
+                                            class="score-circle <%= scores.overall >= 70 ? 'good' : scores.overall >= 50 ? 'ok' : 'bad' %>">
+                                            <span class="score-number">
+                                                <%= scores.overall %>
+                                            </span>
+                                        </div>
+                                        <div class="score-label">
+                                            <span
+                                                class="badge <%= scores.overall >= 70 ? 'badge-green' : scores.overall >= 50 ? 'badge-yellow' : 'badge-red' %>"
+                                                style="font-size: 0.9rem;">
+                                                Grade: <%= grade %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Breakdown -->
+                            <div class="card" style="grid-column: span 2;">
+                                <div class="card-header">
+                                    <h3 class="card-title">Breakdown</h3>
+                                </div>
+                                <div class="card-body">
+                                    <% var items=[ { name: 'Title' , score: scores.title }, { name: 'Meta' , score:
+                                        scores.meta }, { name: 'Content' , score: scores.content }, { name: 'Technical'
+                                        , score: scores.technical }, { name: 'Performance' , score: scores.performance }
+                                        ]; %>
+
+                                        <% items.forEach(function(item) { %>
+                                            <div class="progress-item">
+                                                <div class="progress-header">
+                                                    <span>
+                                                        <%= item.name %>
+                                                    </span>
+                                                    <span>
+                                                        <%= item.score %>%
+                                                    </span>
+                                                </div>
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill <%= item.score >= 70 ? 'good' : item.score >= 50 ? 'ok' : 'bad' %>"
+                                                        style="width: <%= item.score %>%;"></div>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Issues & Suggestions -->
+                        <div class="grid-2 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-exclamation-circle text-yellow"></i> Issues
+                                    </h3>
+                                    <span class="badge badge-gray">
+                                        <%= issues.length %>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <% if (issues.length===0) { %>
+                                        <div class="empty-state" style="padding: 20px 0;">
+                                            <i class="fas fa-check-circle text-green" style="font-size: 1.5rem;"></i>
+                                            <p class="empty-title">No issues found</p>
+                                        </div>
+                                        <% } else { %>
+                                            <% issues.forEach(function(issue) { %>
+                                                <div
+                                                    style="display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border);">
+                                                    <i class="fas fa-<%= issue.type === 'critical' ? 'times-circle text-red' : issue.type === 'warning' ? 'exclamation-circle text-yellow' : 'info-circle text-muted' %>"
+                                                        style="margin-top: 2px;"></i>
+                                                    <div>
+                                                        <div style="font-size: 0.9rem;">
+                                                            <%= issue.message %>
+                                                        </div>
+                                                        <span class="badge badge-gray" style="font-size: 0.7rem;">
+                                                            <%= issue.category %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <% }); %>
+                                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-lightbulb text-yellow"></i> Suggestions</h3>
+                                </div>
+                                <div class="card-body">
+                                    <% if (suggestions.length===0) { %>
+                                        <div class="empty-state" style="padding: 20px 0;">
+                                            <i class="fas fa-thumbs-up text-green" style="font-size: 1.5rem;"></i>
+                                            <p class="empty-title">Looking good!</p>
+                                        </div>
+                                        <% } else { %>
+                                            <% suggestions.forEach(function(s) { %>
+                                                <div
+                                                    style="display: flex; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border);">
+                                                    <i class="fas fa-lightbulb text-yellow"
+                                                        style="margin-top: 2px;"></i>
+                                                    <div style="flex: 1;">
+                                                        <div style="font-size: 0.9rem;">
+                                                            <%= s.suggestion %>
+                                                        </div>
+                                                        <span class="badge badge-gray" style="font-size: 0.7rem;">
+                                                            <%= s.category %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <% }); %>
+                                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Details -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Details</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 150px;"><strong>Title</strong></td>
+                                            <td>
+                                                <% if (seoData.title) { %>
+                                                    <%= seoData.title %>
+                                                        <span class="badge badge-gray" style="margin-left: 6px;">
+                                                            <%= seoData.title.length %> chars
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span class="text-red">Not set</span>
+                                                            <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Meta Description</strong></td>
+                                            <td>
+                                                <% if (seoData.metaDescription) { %>
+                                                    <%= seoData.metaDescription %>
+                                                        <span class="badge badge-gray" style="margin-left: 6px;">
+                                                            <%= seoData.metaDescription.length %> chars
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span class="text-red">Not set</span>
+                                                            <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>H1 Tags</strong></td>
+                                            <td>
+                                                <% if (seoData.h1Tags && seoData.h1Tags.length> 0) { %>
+                                                    <% seoData.h1Tags.forEach(function(h1) { %>
+                                                        <code
+                                                            style="display: block; margin-bottom: 2px;"><%= h1 %></code>
+                                                        <% }); %>
+                                                            <% } else { %>
+                                                                <span class="text-red">None</span>
+                                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Word Count</strong></td>
+                                            <td>
+                                                <%= seoData.wordCount %> words
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Images</strong></td>
+                                            <td>
+                                                <%= seoData.totalImages %> total
+                                                    <% if (seoData.imagesWithoutAlt> 0) { %>
+                                                        <span class="text-red">(<%= seoData.imagesWithoutAlt %> missing
+                                                                alt)</span>
+                                                        <% } else { %>
+                                                            <span class="text-green">(all have alt text)</span>
+                                                            <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Links</strong></td>
+                                            <td>
+                                                <%= seoData.internalLinks %> internal, <%= seoData.externalLinks %>
+                                                        external
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Load Time</strong></td>
+                                            <td>
+                                                <%= seoData.loadTime.toFixed(2) %>s
+                                                    <span
+                                                        class="badge <%= seoData.loadTime < 2 ? 'badge-green' : seoData.loadTime < 4 ? 'badge-yellow' : 'badge-red' %>">
+                                                        <%= seoData.loadTime < 2 ? 'Fast' : seoData.loadTime < 4 ? 'OK'
+                                                            : 'Slow' %>
+                                                    </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Mobile</strong></td>
+                                            <td>
+                                                <% if (seoData.isMobileFriendly) { %>
+                                                    <span class="text-green"><i class="fas fa-check"></i> Yes</span>
+                                                    <% } else { %>
+                                                        <span class="text-red"><i class="fas fa-times"></i> No</span>
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+
+            <%- include('../partials/footer') %>

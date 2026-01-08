@@ -1,0 +1,101 @@
+<% const title='SEO History - ' + website.name; const active='websites' ; %>
+    <%- include('../partials/head') %>
+        <%- include('../partials/navbar') %>
+
+            <div class="layout">
+                <%- include('../partials/sidebar') %>
+
+                    <main class="main-content">
+                        <div class="page-header">
+                            <h1 class="page-title">SEO Edit History</h1>
+                            <p class="page-description">
+                                <a href="/websites/<%= website.id %>">
+                                    <%= website.name %>
+                                </a> - All SEO changes
+                            </p>
+                        </div>
+
+                        <%- include('../partials/flash') %>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">All Changes</h3>
+                                    <a href="/seo/edit/<%= website.id %>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus"></i>
+                                        New Change
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <% if (edits.length===0) { %>
+                                        <div class="empty-state">
+                                            <div class="empty-icon">
+                                                <i class="fas fa-history"></i>
+                                            </div>
+                                            <p class="empty-title">No changes yet</p>
+                                            <p class="empty-description">Make SEO changes to see them here.</p>
+                                            <a href="/seo/edit/<%= website.id %>" class="btn btn-primary">Make a
+                                                Change</a>
+                                        </div>
+                                        <% } else { %>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Field</th>
+                                                            <th>Old Value</th>
+                                                            <th>New Value</th>
+                                                            <th>Status</th>
+                                                            <th>Created</th>
+                                                            <th>Applied</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% edits.forEach(function(edit) { %>
+                                                            <tr>
+                                                                <td>
+                                                                    <%= edit.field_type %>
+                                                                </td>
+                                                                <td class="text-muted">
+                                                                    <%= edit.old_value ? (edit.old_value.length> 30 ?
+                                                                        edit.old_value.substring(0, 30) + '...' :
+                                                                        edit.old_value) : '-' %>
+                                                                </td>
+                                                                <td>
+                                                                    <%= edit.new_value.length> 30 ?
+                                                                        edit.new_value.substring(0, 30) + '...' :
+                                                                        edit.new_value %>
+                                                                </td>
+                                                                <td>
+                                                                    <span
+                                                                        class="badge <%= edit.status === 'applied' ? 'badge-success' : edit.status === 'pending' ? 'badge-warning' : 'badge-neutral' %>">
+                                                                        <%= edit.status %>
+                                                                    </span>
+                                                                </td>
+                                                                <td class="text-muted">
+                                                                    <%= new Date(edit.created_at).toLocaleDateString()
+                                                                        %>
+                                                                </td>
+                                                                <td class="text-muted">
+                                                                    <%= edit.applied_at ? new
+                                                                        Date(edit.applied_at).toLocaleDateString() : '-'
+                                                                        %>
+                                                                </td>
+                                                            </tr>
+                                                            <% }); %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <% } %>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 1.5rem;">
+                                <a href="/websites/<%= website.id %>" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Back to Website
+                                </a>
+                            </div>
+                    </main>
+            </div>
+
+            <%- include('../partials/footer') %>
