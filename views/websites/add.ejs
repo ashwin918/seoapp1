@@ -1,4 +1,4 @@
-<% const title='Add Website' ; const active='add-website' ; %>
+<% const title='Add Repository' ; const active='websites' ; %>
     <%- include('../partials/head') %>
         <%- include('../partials/navbar') %>
 
@@ -6,82 +6,135 @@
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header">
-                            <h1 class="page-title">Add Website</h1>
-                            <p class="page-description">Add a new website to track and manage its SEO.</p>
+                        <div class="page-header mb-4">
+                            <nav class="breadcrumb mb-1" style="font-size: 0.8rem; color: var(--text-light);">
+                                <a href="/websites" style="color: inherit;">Fleet</a> / <span
+                                    style="color: var(--primary);">New Deployment</span>
+                            </nav>
+                            <h1 class="page-title">Deploy New Agent</h1>
+                            <p class="text-muted">Register a new website repository to begin autonomous SEO monitoring.
+                            </p>
                         </div>
 
                         <%- include('../partials/flash') %>
 
-                            <div class="card" style="max-width: 600px;">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <i class="fas fa-plus-circle"></i>
-                                        Website Details
-                                    </h3>
-                                </div>
-                                <div class="card-body">
-                                    <form action="/websites/add" method="POST">
-                                        <div class="form-group">
-                                            <label for="url" class="form-label">Website URL *</label>
-                                            <input type="text" id="url" name="url" class="form-control"
-                                                placeholder="https://example.com" required>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">Website Name</label>
-                                            <input type="text" id="name" name="name" class="form-control"
-                                                placeholder="My Awesome Website">
-                                            <small class="text-muted">If left empty, we'll use the domain name.</small>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="platform" class="form-label">Platform</label>
-                                            <select id="platform" name="platform" class="form-control">
-                                                <option value="">Select platform (optional)</option>
-                                                <option value="wordpress">WordPress</option>
-                                                <option value="shopify">Shopify</option>
-                                                <option value="github">GitHub Pages</option>
-                                                <option value="custom">Custom / Other</option>
-                                            </select>
-                                        </div>
-
-                                        <% if (connectedAccounts.length> 0) { %>
+                            <div class="grid-2" style="grid-template-columns: 1.2fr 1fr; align-items: start;">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            <i class="fas fa-plus-circle" style="color: var(--primary);"></i>
+                                            Repository Configuration
+                                        </h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="/websites/add" method="POST">
                                             <div class="form-group">
-                                                <label for="connectedAccountId" class="form-label">Connected
-                                                    Account</label>
-                                                <select id="connectedAccountId" name="connectedAccountId"
-                                                    class="form-control">
-                                                    <option value="">No connection (manual management)</option>
-                                                    <% connectedAccounts.forEach(function(account) { %>
-                                                        <option value="<%= account.id %>">
-                                                            <%= account.provider.charAt(0).toUpperCase() +
-                                                                account.provider.slice(1) %>: <%= account.account_name
-                                                                    %>
-                                                        </option>
-                                                        <% }); %>
-                                                </select>
-                                                <small class="text-muted">Link this website to a connected account for
-                                                    automatic SEO updates.</small>
+                                                <label for="url" class="form-label">Target URL *</label>
+                                                <div style="position: relative;">
+                                                    <i class="fas fa-globe"
+                                                        style="position: absolute; left: 16px; top: 16px; color: var(--text-light);"></i>
+                                                    <input type="url" id="url" name="url" class="form-control"
+                                                        placeholder="https://www.yoursite.com" required
+                                                        style="padding-left: 44px;">
+                                                </div>
                                             </div>
-                                            <% } else { %>
-                                                <div class="alert alert-info">
-                                                    <i class="fas fa-info-circle alert-icon"></i>
-                                                    <div class="alert-content">
-                                                        <a href="/oauth">Connect an account</a> (GitHub, WordPress, or
-                                                        Shopify) to enable automatic SEO updates.
+
+                                            <div class="form-group">
+                                                <label for="name" class="form-label">Deployment Name</label>
+                                                <input type="text" id="name" name="name" class="form-control"
+                                                    placeholder="Production / Marketing Blog">
+                                                <small class="text-muted">Friendly name to identify this site in your
+                                                    fleet lists.</small>
+                                            </div>
+
+                                            <div class="grid-2" style="gap: 20px;">
+                                                <div class="form-group">
+                                                    <label for="platform" class="form-label">Technology Stack</label>
+                                                    <select id="platform" name="platform" class="form-control">
+                                                        <option value="">General / Other</option>
+                                                        <option value="wordpress">WordPress</option>
+                                                        <option value="shopify">Shopify</option>
+                                                        <option value="nextjs">Next.js</option>
+                                                        <option value="react">React / SPA</option>
+                                                    </select>
+                                                </div>
+
+                                                <% if (connectedAccounts.length> 0) { %>
+                                                    <div class="form-group">
+                                                        <label for="connectedAccountId" class="form-label">Sync
+                                                            Connection</label>
+                                                        <select id="connectedAccountId" name="connectedAccountId"
+                                                            class="form-control">
+                                                            <option value="">Manual Only</option>
+                                                            <% connectedAccounts.forEach(function(account) { %>
+                                                                <option value="<%= account.id %>">
+                                                                    <%= account.provider.toUpperCase() %>: <%=
+                                                                            account.account_name %>
+                                                                </option>
+                                                                <% }); %>
+                                                        </select>
+                                                    </div>
+                                                    <% } %>
+                                            </div>
+
+                                            <div
+                                                style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                                                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                                    <i class="fas fa-rocket"></i> Launch Agent
+                                                </button>
+                                                <a href="/websites" class="btn btn-secondary">Cancel</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; gap: 24px;">
+                                    <div class="card" style="background: var(--bg-surface-elevated);">
+                                        <div class="card-body" style="padding: 32px;">
+                                            <div class="feature-icon"
+                                                style="width: 48px; height: 48px; font-size: 1.25rem; margin-bottom: 20px;">
+                                                <i class="fas fa-shield-check"></i>
+                                            </div>
+                                            <h4 style="margin-bottom: 12px;">What happens next?</h4>
+                                            <ul
+                                                style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px;">
+                                                <li style="display: flex; gap: 12px; font-size: 0.9rem;">
+                                                    <i class="fas fa-check-circle"
+                                                        style="color: var(--success); margin-top: 4px;"></i>
+                                                    <span>Agent performs deep crawl of the target URL.</span>
+                                                </li>
+                                                <li style="display: flex; gap: 12px; font-size: 0.9rem;">
+                                                    <i class="fas fa-check-circle"
+                                                        style="color: var(--success); margin-top: 4px;"></i>
+                                                    <span>ML engine calculates initial SEO Scores.</span>
+                                                </li>
+                                                <li style="display: flex; gap: 12px; font-size: 0.9rem;">
+                                                    <i class="fas fa-check-circle"
+                                                        style="color: var(--success); margin-top: 4px;"></i>
+                                                    <span>AI identifies optimization low-hanging fruits.</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <% if (connectedAccounts.length===0) { %>
+                                        <div class="card"
+                                            style="border: 1px dashed var(--warning); background: var(--warning-bg);">
+                                            <div class="card-body" style="padding: 24px; color: var(--warning);">
+                                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                                    <i class="fas fa-exclamation-circle" style="margin-top: 4px;"></i>
+                                                    <div style="font-size: 0.85rem;">
+                                                        <strong>Automatic Sync Disabled</strong><br>
+                                                        Connect a platform to enable one-click deployments from our
+                                                        Intelligence Editor.
+                                                        <a href="/oauth"
+                                                            style="color: var(--warning); text-decoration: underline; display: block; margin-top: 8px; font-weight: 700;">Link
+                                                            Account Now</a>
                                                     </div>
                                                 </div>
-                                                <% } %>
-
-                                                    <div style="display: flex; gap: 1rem;">
-                                                        <button type="submit" class="btn btn-primary">
-                                                            <i class="fas fa-plus"></i>
-                                                            Add Website
-                                                        </button>
-                                                        <a href="/websites" class="btn btn-secondary">Cancel</a>
-                                                    </div>
-                                    </form>
+                                            </div>
+                                        </div>
+                                        <% } %>
                                 </div>
                             </div>
                     </main>

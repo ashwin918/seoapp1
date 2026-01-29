@@ -1,43 +1,68 @@
 <aside class="sidebar">
     <ul class="sidebar-nav">
-        <li><a href="/dashboard"
-                class="sidebar-link <%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>"><i
-                    class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="/analyze"
-                class="sidebar-link <%= typeof active !== 'undefined' && active === 'analyze' ? 'active' : '' %>"><i
-                    class="fas fa-search"></i> Analyze</a></li>
-        <li><a href="/analyze/history/all"
-                class="sidebar-link <%= typeof active !== 'undefined' && active === 'history' ? 'active' : '' %>"><i
-                    class="fas fa-history"></i> History</a></li>
+        <li>
+            <a href="/dashboard"
+                class="sidebar-link <%= typeof active !== 'undefined' && active === 'dashboard' ? 'active' : '' %>">
+                <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="/analyze"
+                class="sidebar-link <%= typeof active !== 'undefined' && active === 'analyze' ? 'active' : '' %>">
+                <i class="fas fa-search"></i> <span>Analyze</span>
+            </a>
+        </li>
+        <li>
+            <a href="/analyze/history/all"
+                class="sidebar-link <%= typeof active !== 'undefined' && active === 'history' ? 'active' : '' %>">
+                <i class="fas fa-history"></i> <span>History</span>
+            </a>
+        </li>
     </ul>
 
     <div class="sidebar-section">
         <div class="sidebar-section-title">Websites</div>
         <ul class="sidebar-nav">
-            <li><a href="/websites"
-                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'websites' ? 'active' : '' %>"><i
-                        class="fas fa-globe"></i> My Websites</a></li>
-            <li><a href="/websites/add"
-                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'add-website' ? 'active' : '' %>"><i
-                        class="fas fa-plus"></i> Add Website</a></li>
+            <li>
+                <a href="/websites"
+                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'websites' ? 'active' : '' %>">
+                    <i class="fas fa-globe"></i> <span>My Websites</span>
+                </a>
+            </li>
+            <li>
+                <a href="/websites/add"
+                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'add-website' ? 'active' : '' %>">
+                    <i class="fas fa-plus"></i> <span>Add Website</span>
+                </a>
+            </li>
         </ul>
     </div>
 
     <div class="sidebar-section">
         <div class="sidebar-section-title">Integrations</div>
         <ul class="sidebar-nav">
-            <li><a href="/oauth"
-                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'oauth' ? 'active' : '' %>"><i
-                        class="fas fa-plug"></i> Connections</a></li>
+            <li>
+                <a href="/oauth"
+                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'oauth' ? 'active' : '' %>">
+                    <i class="fas fa-plug"></i> <span>Connections</span>
+                </a>
+            </li>
         </ul>
     </div>
 
-    <div class="sidebar-section">
-        <div class="sidebar-section-title">Account</div>
+    <div class="sidebar-section" style="margin-top: auto;">
         <ul class="sidebar-nav">
-            <li><a href="/dashboard/settings"
-                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'settings' ? 'active' : '' %>"><i
-                        class="fas fa-cog"></i> Settings</a></li>
+            <li>
+                <a href="/dashboard/settings"
+                    class="sidebar-link <%= typeof active !== 'undefined' && active === 'settings' ? 'active' : '' %>">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="/logout" class="sidebar-link" style="color: var(--danger);">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
         </ul>
     </div>
 </aside>

@@ -1,268 +1,471 @@
-<% const title='SEO Editor' ; const active='websites' ; %>
+<% const title='SEO Intelligence Editor' ; const active='websites' ; %>
     <%- include('../partials/head') %>
         <%- include('../partials/navbar') %>
+
+            <style>
+                .serp-preview {
+                    background: white;
+                    padding: 24px;
+                    border-radius: var(--radius);
+                    border: 1px solid var(--border);
+                    max-width: 600px;
+                    font-family: arial, sans-serif;
+                }
+
+                .serp-url {
+                    color: #202124;
+                    font-size: 14px;
+                    margin-bottom: 4px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .serp-title {
+                    color: #1a0dab;
+                    font-size: 20px;
+                    line-height: 1.3;
+                    margin-bottom: 4px;
+                    cursor: pointer;
+                }
+
+                .serp-title:hover {
+                    text-decoration: underline;
+                }
+
+                .serp-desc {
+                    color: #4d5156;
+                    font-size: 14px;
+                    line-height: 1.58;
+                }
+
+                .suggestion-card:hover {
+                    border-color: var(--primary) !important;
+                    cursor: pointer;
+                    transform: scale(1.01);
+                }
+
+                .char-limit-badge {
+                    font-size: 0.7rem;
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                }
+
+                .limit-good {
+                    background: var(--success-bg);
+                    color: var(--success);
+                }
+
+                .limit-bad {
+                    background: var(--danger-bg);
+                    color: var(--danger);
+                }
+            </style>
 
             <div class="layout">
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header"
-                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="page-header mb-4"
+                            style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h1 class="page-title">SEO Editor</h1>
-                                <p class="page-desc">
+                                <nav class="breadcrumb mb-1" style="font-size: 0.8rem; color: var(--text-light);">
+                                    <a href="/websites" style="color: inherit;">Fleet</a> / <a
+                                        href="/websites/<%= website.id %>" style="color: inherit;">
+                                        <%= website.name %>
+                                    </a> / <span style="color: var(--primary);">Intelligence Editor</span>
+                                </nav>
+                                <h1 class="page-title" style="margin: 0;">Intelligence Editor</h1>
+                                <p class="text-muted"><i class="fas fa-link" style="margin-right: 8px;"></i>
                                     <%= website.url %>
                                 </p>
                             </div>
-                            <a href="/websites" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i>
-                                Back</a>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-secondary btn-sm" id="regenerateBtn"
+                                    onclick="regenerateContent()">
+                                    <i class="fas fa-sync"></i> Refresh AI Analysis
+                                </button>
+                                <a href="/websites/<%= website.id %>" class="btn btn-ghost btn-sm">Exit Editor</a>
+                            </div>
                         </div>
 
                         <%- include('../partials/flash') %>
 
-                            <% if (connectedAccount) { %>
-                                <div class="alert alert-success">
-                                    <i class="fas fa-plug"></i>
-                                    <span>Connected to <strong>
-                                            <%= connectedAccount.provider %>
-                                        </strong> - Changes can be pushed to your site</span>
-                                </div>
-                                <% } else { %>
-                                    <div class="alert alert-warning">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <span>No platform connected. <a href="/oauth">Connect a platform</a> to push
-                                            changes</span>
-                                    </div>
-                                    <% } %>
+                            <div class="grid-2" style="grid-template-columns: 1.4fr 1fr;">
+                                <!-- Left Column: Current State & AI Suggestions -->
+                                <div style="display: flex; flex-direction: column; gap: 32px;">
 
-                                        <div class="grid-2 mb-4">
-                                            <!-- Suggestions -->
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h3 class="card-title"><i class="fas fa-lightbulb"></i> Suggestions
-                                                    </h3>
-                                                    <button class="btn btn-secondary btn-sm" id="regenerateBtn"
-                                                        onclick="regenerateContent()">
-                                                        <i class="fas fa-sync"></i> Refresh
-                                                    </button>
+                                    <!-- Current Metadata Card -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><i class="fas fa-search"
+                                                    style="color: var(--info);"></i> Current Live Preview</h3>
+                                            <span class="badge badge-gray">Desktop Google Search</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="serp-preview mb-4">
+                                                <div class="serp-url">
+                                                    <%= website.url %>
                                                 </div>
-                                                <div class="card-body">
-                                                    <% if (aiSuggestions) { %>
-
-                                                        <% if (aiSuggestions.title && aiSuggestions.title.suggestions) {
-                                                            %>
-                                                            <div class="mb-4">
-                                                                <h4
-                                                                    style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;">
-                                                                    Title Options</h4>
-                                                                <% aiSuggestions.title.suggestions.forEach(function(s,
-                                                                    idx) { %>
-                                                                    <div style="padding: 10px; background: var(--bg-light); border-radius: var(--radius); margin-bottom: 6px; border-left: 3px solid var(--primary);"
-                                                                        data-type="title"
-                                                                        data-content="<%= encodeURIComponent(s.content) %>">
-                                                                        <div
-                                                                            style="display: flex; justify-content: space-between; gap: 10px;">
-                                                                            <div style="flex: 1;">
-                                                                                <p
-                                                                                    style="font-weight: 500; font-size: 0.9rem; margin-bottom: 4px;">
-                                                                                    <%= s.content %>
-                                                                                </p>
-                                                                                <span class="text-muted"
-                                                                                    style="font-size: 0.75rem;">
-                                                                                    <%= s.reason %>
-                                                                                </span>
-                                                                            </div>
-                                                                            <button
-                                                                                class="btn btn-primary btn-sm apply-btn">Use</button>
-                                                                        </div>
-                                                                    </div>
-                                                                    <% }); %>
-                                                            </div>
-                                                            <% } %>
-
-                                                                <% if (aiSuggestions.meta_description &&
-                                                                    aiSuggestions.meta_description.suggestions) { %>
-                                                                    <div class="mb-4">
-                                                                        <h4
-                                                                            style="font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;">
-                                                                            Description Options</h4>
-                                                                        <% aiSuggestions.meta_description.suggestions.forEach(function(s,
-                                                                            idx) { %>
-                                                                            <div style="padding: 10px; background: var(--bg-light); border-radius: var(--radius); margin-bottom: 6px; border-left: 3px solid var(--green);"
-                                                                                data-type="meta_description"
-                                                                                data-content="<%= encodeURIComponent(s.content) %>">
-                                                                                <div
-                                                                                    style="display: flex; justify-content: space-between; gap: 10px;">
-                                                                                    <div style="flex: 1;">
-                                                                                        <p
-                                                                                            style="font-size: 0.85rem; margin-bottom: 4px;">
-                                                                                            <%= s.content %>
-                                                                                        </p>
-                                                                                        <span class="badge badge-gray">
-                                                                                            <%= s.length %> chars
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <button
-                                                                                        class="btn btn-success btn-sm apply-btn">Use</button>
-                                                                                </div>
-                                                                            </div>
-                                                                            <% }); %>
-                                                                    </div>
-                                                                    <% } %>
-
-                                                                        <% } else { %>
-                                                                            <div class="empty-state">
-                                                                                <div class="empty-icon"><i
-                                                                                        class="fas fa-lightbulb"></i>
-                                                                                </div>
-                                                                                <p class="empty-title">No suggestions
-                                                                                    yet</p>
-                                                                                <p class="text-muted"
-                                                                                    style="font-size: 0.85rem;">Click
-                                                                                    Refresh to generate suggestions</p>
-                                                                            </div>
-                                                                            <% } %>
+                                                <div class="serp-title" id="previewTitle">
+                                                    <%= (analysis && analysis.title) ? analysis.title
+                                                        : 'No title detected' %>
+                                                </div>
+                                                <div class="serp-desc" id="previewDesc">
+                                                    <%= (analysis && analysis.meta_description) ?
+                                                        analysis.meta_description
+                                                        : 'No description detected. Search engines will auto-generate one based on page content.'
+                                                        %>
                                                 </div>
                                             </div>
 
-                                            <!-- Manual Edit -->
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h3 class="card-title"><i class="fas fa-edit"></i> Custom Edit</h3>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                                <div class="stat-box"
+                                                    style="padding: 16px; border-radius: var(--radius-sm);">
+                                                    <div class="stat-label" style="font-size: 0.7rem;">Live Title Length
+                                                    </div>
+                                                    <div class="stat-value" style="font-size: 1.25rem;">
+                                                        <%= (analysis && analysis.title) ? analysis.title.length : 0 %>
+                                                            <small
+                                                                style="font-size: 0.8rem; color: var(--text-light);">/
+                                                                60</small>
+                                                    </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <form action="/seo/edit/<%= website.id %>" method="POST">
-                                                        <div class="form-group">
-                                                            <label class="form-label">Field</label>
-                                                            <select name="field_type" class="form-control" required>
-                                                                <option value="title">Title</option>
-                                                                <option value="meta_description">Meta Description
-                                                                </option>
-                                                                <option value="h1">H1 Heading</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label class="form-label">Current (optional)</label>
-                                                            <textarea name="old_value" class="form-control" rows="2"
-                                                                placeholder="Current value"></textarea>
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            <label class="form-label">New Value</label>
-                                                            <textarea name="new_value" id="newValue"
-                                                                class="form-control" rows="3"
-                                                                placeholder="Enter new content" required></textarea>
-                                                            <small class="text-muted" id="charCount">0 chars</small>
-                                                        </div>
-
-                                                        <button type="submit" class="btn btn-primary"
-                                                            style="width: 100%;">Save Change</button>
-                                                    </form>
+                                                <div class="stat-box"
+                                                    style="padding: 16px; border-radius: var(--radius-sm);">
+                                                    <div class="stat-label" style="font-size: 0.7rem;">Live Meta Length
+                                                    </div>
+                                                    <div class="stat-value" style="font-size: 1.25rem;">
+                                                        <%= (analysis && analysis.meta_description) ?
+                                                            analysis.meta_description.length : 0 %> <small
+                                                                style="font-size: 0.8rem; color: var(--text-light);">/
+                                                                160</small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!-- Pending -->
-                                        <% if (pendingEdits.length> 0) { %>
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h3 class="card-title"><i class="fas fa-clock"></i> Pending (<%=
-                                                            pendingEdits.length %>)</h3>
+                                    <!-- AI Suggestions Card -->
+                                    <div class="card" style="border-top: 4px solid var(--accent);">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><i class="fas fa-magic"
+                                                    style="color: var(--accent);"></i> AI Optimization Suggestions</h3>
+                                            <div class="badge badge-accent">Agent V2.0 Active</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <% if (aiSuggestions) { %>
+                                                <!-- Title Suggestions -->
+                                                <div class="suggestion-section mb-4">
+                                                    <h4
+                                                        style="font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                                        <i class="fas fa-heading" style="color: var(--primary);"></i>
+                                                        Proposed Titles
+                                                    </h4>
+                                                    <% if (aiSuggestions.title && aiSuggestions.title.suggestions) { %>
+                                                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                                                            <% aiSuggestions.title.suggestions.forEach(function(s, idx)
+                                                                { %>
+                                                                <div class="suggestion-card"
+                                                                    onclick="stageSuggestion('title', '<%= encodeURIComponent(s.content) %>')"
+                                                                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; border-left: 4px solid var(--primary);">
+                                                                    <div
+                                                                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                                                        <span
+                                                                            style="font-weight: 700; color: var(--text-main);">
+                                                                            <%= s.content %>
+                                                                        </span>
+                                                                        <span class="badge badge-gray">
+                                                                            <%= s.content.length %> chars
+                                                                        </span>
+                                                                    </div>
+                                                                    <div
+                                                                        style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                                                                        <i class="fas fa-lightbulb"
+                                                                            style="color: var(--warning); margin-right: 6px;"></i>
+                                                                        <%= s.reason %>
+                                                                    </div>
+                                                                </div>
+                                                                <% }); %>
+                                                        </div>
+                                                        <% } %>
                                                 </div>
-                                                <div class="card-body">
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Field</th>
-                                                                <th>New Value</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <% pendingEdits.forEach(function(edit) { %>
-                                                                <tr>
-                                                                    <td><span class="badge badge-blue">
+
+                                                <!-- Meta Suggestions -->
+                                                <div class="suggestion-section">
+                                                    <h4
+                                                        style="font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                                        <i class="fas fa-align-left" style="color: var(--success);"></i>
+                                                        Proposed Descriptions
+                                                    </h4>
+                                                    <% if (aiSuggestions.meta_description &&
+                                                        aiSuggestions.meta_description.suggestions) { %>
+                                                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                                                            <% aiSuggestions.meta_description.suggestions.forEach(function(s,
+                                                                idx) { %>
+                                                                <div class="suggestion-card"
+                                                                    onclick="stageSuggestion('meta_description', '<%= encodeURIComponent(s.content) %>')"
+                                                                    style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; border-left: 4px solid var(--success);">
+                                                                    <div
+                                                                        style="margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5; color: var(--text-main);">
+                                                                        <%= s.content %>
+                                                                    </div>
+                                                                    <div
+                                                                        style="display: flex; justify-content: space-between; align-items: center;">
+                                                                        <span class="badge badge-gray">
+                                                                            <%= s.content.length %> chars
+                                                                        </span>
+                                                                        <span class="badge badge-green"
+                                                                            style="font-size: 0.65rem;">High CTR
+                                                                            Potential</span>
+                                                                    </div>
+                                                                </div>
+                                                                <% }); %>
+                                                        </div>
+                                                        <% } %>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="text-center" style="padding: 60px;">
+                                                        <i class="fas fa-robot mb-3"
+                                                            style="font-size: 3rem; opacity: 0.1;"></i>
+                                                        <p class="text-muted">Agent is ready but needs a refresh.</p>
+                                                        <button onclick="regenerateContent()"
+                                                            class="btn btn-primary mt-3">Start Agent Analysis</button>
+                                                    </div>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Editor & Staging -->
+                                <div style="display: flex; flex-direction: column; gap: 32px;">
+
+                                    <!-- Manual Editor Card -->
+                                    <div class="card" id="editorCard">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><i class="fas fa-pen-fancy"></i> Manual Deployment
+                                                Control</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="/seo/edit/<%= website.id %>" method="POST" id="editForm">
+                                                <input type="hidden" name="old_value" id="oldValueInput">
+
+                                                <div class="form-group">
+                                                    <label class="form-label">Select Optimization Field</label>
+                                                    <select name="field_type" id="fieldType" class="form-control"
+                                                        onchange="updateEditorMode()">
+                                                        <option value="title">Search Title</option>
+                                                        <option value="meta_description">Search Description</option>
+                                                        <option value="h1">Primary Heading (H1)</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div
+                                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                        <label class="form-label">Revised Content</label>
+                                                        <div id="charCounter" class="char-limit-badge limit-good">0
+                                                            characters</div>
+                                                    </div>
+                                                    <textarea name="new_value" id="newValue" class="form-control"
+                                                        rows="5" placeholder="Draft your changes here..." required
+                                                        oninput="syncPreview()"></textarea>
+                                                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-light);"
+                                                        id="limitText">
+                                                        Recommended: 50-60 characters for optimal display.
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary"
+                                                    style="width: 100%; height: 50px;">
+                                                    <i class="fas fa-layer-group"></i> Move to Staging
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Staging Queue Card -->
+                                    <div class="card" style="border-top: 4px solid var(--primary);">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><i class="fas fa-rocket"></i> Deployment Staging</h3>
+                                            <span class="badge badge-blue">
+                                                <%= pendingEdits.length %> Ready
+                                            </span>
+                                        </div>
+                                        <div class="card-body" style="padding: 0;">
+                                            <% if (pendingEdits.length===0) { %>
+                                                <div class="text-center" style="padding: 40px;">
+                                                    <i class="fas fa-inbox mb-3"
+                                                        style="font-size: 2rem; opacity: 0.1;"></i>
+                                                    <p class="text-muted" style="font-size: 0.85rem;">Staging queue is
+                                                        empty. Edit a field to prepare a deployment.</p>
+                                                </div>
+                                                <% } else { %>
+                                                    <div style="display: flex; flex-direction: column;">
+                                                        <% pendingEdits.forEach(function(edit) { %>
+                                                            <div
+                                                                style="padding: 24px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01);">
+                                                                <div
+                                                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                                                    <div>
+                                                                        <span class="badge badge-blue"
+                                                                            style="margin-bottom: 4px;">
                                                                             <%= edit.field_type %>
-                                                                        </span></td>
-                                                                    <td
-                                                                        style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">
-                                                                        <%= edit.new_value %>
-                                                                    </td>
-                                                                    <td>
+                                                                        </span>
+                                                                        <div
+                                                                            style="font-size: 0.7rem; color: var(--text-light);">
+                                                                            Prepared <%= new
+                                                                                Date(edit.created_at).toLocaleTimeString()
+                                                                                %>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div style="display: flex; gap: 8px;">
                                                                         <form action="/seo/apply/<%= edit.id %>"
-                                                                            method="POST" style="display: inline;">
+                                                                            method="POST">
                                                                             <button type="submit"
-                                                                                class="btn btn-success btn-sm">Push</button>
+                                                                                class="btn btn-primary btn-sm">Push
+                                                                                Live</button>
                                                                         </form>
                                                                         <form action="/seo/cancel/<%= edit.id %>"
-                                                                            method="POST" style="display: inline;">
+                                                                            method="POST">
                                                                             <button type="submit"
-                                                                                class="btn btn-ghost btn-sm"><i
+                                                                                class="btn btn-ghost btn-sm text-red"
+                                                                                title="Remove"><i
                                                                                     class="fas fa-times"></i></button>
                                                                         </form>
-                                                                    </td>
-                                                                </tr>
-                                                                <% }); %>
-                                                        </tbody>
-                                                    </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    style="font-size: 0.85rem; font-family: monospace; color: var(--success); background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; word-break: break-all;">
+                                                                    <%= edit.new_value %>
+                                                                </div>
+                                                            </div>
+                                                            <% }); %>
+                                                    </div>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sync Status -->
+                                    <div class="card" style="background: var(--bg-surface);">
+                                        <div class="card-body"
+                                            style="padding: 24px; display: flex; align-items: center; gap: 16px;">
+                                            <div
+                                                style="width: 48px; height: 48px; border-radius: 50%; background: <%= connectedAccount ? 'var(--success-bg)' : 'var(--warning-bg)' %>; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                                                <i class="fas fa-<%= connectedAccount ? 'link' : 'unlink' %>"
+                                                    style="color: <%= connectedAccount ? 'var(--success)' : 'var(--warning)' %>"></i>
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 700; font-size: 0.95rem;">
+                                                    <%= connectedAccount ? 'Platform Connection: Active'
+                                                        : 'No Platform Linked' %>
+                                                </div>
+                                                <div class="text-muted" style="font-size: 0.8rem;">
+                                                    <%= connectedAccount ? 'Connected via ' + connectedAccount.provider
+                                                        : 'Connect to WordPress or Shopify to push changes.' %>
                                                 </div>
                                             </div>
-                                            <% } %>
+                                            <% if (!connectedAccount) { %>
+                                                <a href="/oauth" class="btn btn-secondary btn-sm">Link</a>
+                                                <% } %>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                     </main>
             </div>
 
             <script>
-                var websiteId = '<%= website.id %>';
+                const websiteId = '<%= website.id %>';
+                const analysisData = <% - JSON.stringify(analysis || {}) %>;
 
-                document.getElementById('newValue').addEventListener('input', function () {
-                    document.getElementById('charCount').textContent = this.value.length + ' chars';
-                });
+                function stageSuggestion(type, encodedContent) {
+                    const content = decodeURIComponent(encodedContent);
+                    const typeSelect = document.getElementById('fieldType');
+                    const textArea = document.getElementById('newValue');
 
-                document.querySelectorAll('.apply-btn').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        var parent = this.closest('[data-type]');
-                        var type = parent.getAttribute('data-type');
-                        var content = decodeURIComponent(parent.getAttribute('data-content'));
+                    typeSelect.value = type;
+                    textArea.value = content;
 
-                        if (confirm('Apply this suggestion?')) {
-                            fetch('/seo/apply-ai/' + websiteId, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ suggestion_type: type, suggestion_content: content })
-                            })
-                                .then(function (r) { return r.json(); })
-                                .then(function (data) {
-                                    if (data.success) {
-                                        alert(data.message);
-                                        location.reload();
-                                    } else {
-                                        alert('Error: ' + data.error);
-                                    }
-                                });
+                    // Scroll to editor and focus
+                    document.getElementById('editorCard').scrollIntoView({ behavior: 'smooth' });
+                    textArea.focus();
+
+                    updateEditorMode();
+                    syncPreview();
+                }
+
+                function updateEditorMode() {
+                    const type = document.getElementById('fieldType').value;
+                    const limitText = document.getElementById('limitText');
+                    const oldValueInput = document.getElementById('oldValueInput');
+
+                    if (type === 'title') {
+                        limitText.textContent = "Recommended: 50-60 characters. Anything longer may be truncated in search results.";
+                        oldValueInput.value = analysisData.title || '';
+                    } else if (type === 'meta_description') {
+                        limitText.textContent = "Recommended: 150-160 characters. Provide a clear summary to improve click-through rates.";
+                        oldValueInput.value = analysisData.meta_description || '';
+                    } else {
+                        limitText.textContent = "H1 tags should be concise and contain your primary target keyword.";
+                        oldValueInput.value = '';
+                    }
+
+                    syncPreview();
+                }
+
+                function syncPreview() {
+                    const type = document.getElementById('fieldType').value;
+                    const val = document.getElementById('newValue').value;
+                    const charCounter = document.getElementById('charCounter');
+                    const previewTitle = document.getElementById('previewTitle');
+                    const previewDesc = document.getElementById('previewDesc');
+
+                    const len = val.length;
+                    charCounter.textContent = len + ' characters';
+
+                    // Update character counter colors
+                    if (type === 'title') {
+                        previewTitle.textContent = val || analysisData.title || 'Untitled Page';
+                        if (len >= 50 && len <= 60) {
+                            charCounter.className = 'char-limit-badge limit-good';
+                        } else if (len > 0) {
+                            charCounter.className = 'char-limit-badge limit-bad';
                         }
-                    });
-                });
+                    } else if (type === 'meta_description') {
+                        previewDesc.textContent = val || analysisData.meta_description || 'No description detected.';
+                        if (len >= 120 && len <= 160) {
+                            charCounter.className = 'char-limit-badge limit-good';
+                        } else if (len > 0) {
+                            charCounter.className = 'char-limit-badge limit-bad';
+                        }
+                    }
+                }
 
                 function regenerateContent() {
-                    var btn = document.getElementById('regenerateBtn');
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    const btn = document.getElementById('regenerateBtn');
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying Agents...';
                     btn.disabled = true;
 
                     fetch('/seo/generate/' + websiteId, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     })
-                        .then(function (r) { return r.json(); })
-                        .then(function (data) {
+                        .then(r => r.json())
+                        .then(data => {
                             if (data.success) location.reload();
                             else alert('Error: ' + data.error);
                         })
-                        .finally(function () {
-                            btn.innerHTML = '<i class="fas fa-sync"></i> Refresh';
+                        .finally(() => {
+                            btn.innerHTML = originalHtml;
                             btn.disabled = false;
                         });
                 }
+
+                // Initialize
+                updateEditorMode();
             </script>
 
             <%- include('../partials/footer') %>

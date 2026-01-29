@@ -1,14 +1,80 @@
-<% const title='Connections' ; const active='oauth' ; %>
+<% const title='Integrations' ; const active='oauth' ; %>
     <%- include('../partials/head') %>
         <%- include('../partials/navbar') %>
+
+            <style>
+                .provider-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 32px;
+                    margin-bottom: 40px;
+                }
+
+                .provider-card {
+                    transition: var(--transition);
+                    border: 1px solid var(--border);
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .provider-card:hover {
+                    transform: translateY(-8px);
+                    border-color: var(--primary);
+                    box-shadow: var(--shadow-glow);
+                }
+
+                .provider-icon-large {
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2.5rem;
+                    margin-bottom: 24px;
+                }
+
+                .github-icon {
+                    background: #24292e;
+                    color: white;
+                }
+
+                .wordpress-icon {
+                    background: #21759b;
+                    color: white;
+                }
+
+                .shopify-icon {
+                    background: #96bf48;
+                    color: white;
+                }
+
+                .status-dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    display: inline-block;
+                    margin-right: 8px;
+                }
+
+                .dot-active {
+                    background: var(--success);
+                    box-shadow: 0 0 10px var(--success);
+                }
+
+                .dot-inactive {
+                    background: var(--text-light);
+                }
+            </style>
 
             <div class="layout">
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header">
-                            <h1 class="page-title">Connections</h1>
-                            <p class="page-description">Connect your platforms to manage SEO directly</p>
+                        <div class="page-header mb-4">
+                            <h1 class="page-title">Platform Integrations</h1>
+                            <p class="text-muted">Connect your CMS or Repository to enable autonomous SEO deployments.
+                            </p>
                         </div>
 
                         <%- include('../partials/flash') %>
@@ -16,113 +82,177 @@
                             <div class="provider-grid">
                                 <!-- GitHub -->
                                 <div class="card provider-card">
-                                    <div class="provider-icon github">
-                                        <i class="fab fa-github"></i>
-                                    </div>
-                                    <div class="provider-info">
-                                        <div class="provider-name">GitHub</div>
-                                        <% const githubAccount=connectedAccounts.find(a=> a.provider === 'github');
-                                            %>
-                                            <% if (githubAccount) { %>
-                                                <div class="provider-status provider-connected">
-                                                    <i class="fas fa-check-circle"></i>
+                                    <div class="card-body">
+                                        <div class="provider-icon-large github-icon">
+                                            <i class="fab fa-github"></i>
+                                        </div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                                            <div>
+                                                <h3 style="margin: 0; font-size: 1.5rem;">GitHub</h3>
+                                                <p class="text-muted" style="font-size: 0.85rem;">Push metadata to code
+                                                    repos</p>
+                                            </div>
+                                            <% const githubAccount=connectedAccounts.find(a=> a.provider === 'github');
+                                                %>
+                                                <div class="badge <%= githubAccount ? 'badge-green' : 'badge-gray' %>">
+                                                    <span
+                                                        class="status-dot <%= githubAccount ? 'dot-active' : 'dot-inactive' %>"></span>
+                                                    <%= githubAccount ? 'Connected' : 'Disconnected' %>
+                                                </div>
+                                        </div>
+
+                                        <% if (githubAccount) { %>
+                                            <div
+                                                style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+                                                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">
                                                     <%= githubAccount.account_name %>
                                                 </div>
-                                                <% } else { %>
-                                                    <div class="provider-status">Not connected</div>
-                                                    <% } %>
+                                                <div
+                                                    style="font-size: 0.8rem; color: var(--text-light); font-family: monospace;">
+                                                    <%= githubAccount.account_url %>
+                                                </div>
+                                            </div>
+                                            <form action="/oauth/github/disconnect" method="POST">
+                                                <button type="submit" class="btn btn-secondary btn-sm"
+                                                    style="width: 100%; color: var(--danger);">Disconnect
+                                                    Platform</button>
+                                            </form>
+                                            <% } else { %>
+                                                <p class="text-muted mb-4" style="font-size: 0.9rem;">Perfect for
+                                                    developers managing SEO via technical configuration files.</p>
+                                                <a href="/oauth/github" class="btn btn-primary"
+                                                    style="width: 100%;">Connect GitHub</a>
+                                                <% } %>
                                     </div>
-                                    <% if (githubAccount) { %>
-                                        <form action="/oauth/github/disconnect" method="POST">
-                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
-                                        </form>
-                                        <% } else { %>
-                                            <a href="/oauth/github" class="btn btn-primary btn-sm">Connect</a>
-                                            <% } %>
                                 </div>
 
                                 <!-- WordPress -->
                                 <div class="card provider-card">
-                                    <div class="provider-icon wordpress">
-                                        <i class="fab fa-wordpress"></i>
-                                    </div>
-                                    <div class="provider-info">
-                                        <div class="provider-name">WordPress</div>
-                                        <% const wordpressAccount=connectedAccounts.find(a=> a.provider ===
-                                            'wordpress');
-                                            %>
-                                            <% if (wordpressAccount) { %>
-                                                <div class="provider-status provider-connected">
-                                                    <i class="fas fa-check-circle"></i>
+                                    <div class="card-body">
+                                        <div class="provider-icon-large wordpress-icon">
+                                            <i class="fab fa-wordpress"></i>
+                                        </div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                                            <div>
+                                                <h3 style="margin: 0; font-size: 1.5rem;">WordPress</h3>
+                                                <p class="text-muted" style="font-size: 0.85rem;">Update posts & pages
+                                                </p>
+                                            </div>
+                                            <% const wordpressAccount=connectedAccounts.find(a=> a.provider ===
+                                                'wordpress'); %>
+                                                <div
+                                                    class="badge <%= wordpressAccount ? 'badge-green' : 'badge-gray' %>">
+                                                    <span
+                                                        class="status-dot <%= wordpressAccount ? 'dot-active' : 'dot-inactive' %>"></span>
+                                                    <%= wordpressAccount ? 'Connected' : 'Disconnected' %>
+                                                </div>
+                                        </div>
+
+                                        <% if (wordpressAccount) { %>
+                                            <div
+                                                style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+                                                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">
                                                     <%= wordpressAccount.account_name %>
                                                 </div>
-                                                <% } else { %>
-                                                    <div class="provider-status">Not connected</div>
-                                                    <% } %>
+                                                <div
+                                                    style="font-size: 0.8rem; color: var(--text-light); font-family: monospace;">
+                                                    <%= wordpressAccount.account_url %>
+                                                </div>
+                                            </div>
+                                            <form action="/oauth/wordpress/disconnect" method="POST">
+                                                <button type="submit" class="btn btn-secondary btn-sm"
+                                                    style="width: 100%; color: var(--danger);">Disconnect
+                                                    Platform</button>
+                                            </form>
+                                            <% } else { %>
+                                                <p class="text-muted mb-4" style="font-size: 0.9rem;">Automate blog post
+                                                    titles and meta descriptions via our WordPress agent.</p>
+                                                <a href="/oauth/wordpress" class="btn btn-primary"
+                                                    style="width: 100%;">Connect WordPress</a>
+                                                <% } %>
                                     </div>
-                                    <% if (wordpressAccount) { %>
-                                        <form action="/oauth/wordpress/disconnect" method="POST">
-                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
-                                        </form>
-                                        <% } else { %>
-                                            <a href="/oauth/wordpress" class="btn btn-primary btn-sm">Connect</a>
-                                            <% } %>
                                 </div>
 
                                 <!-- Shopify -->
                                 <div class="card provider-card">
-                                    <div class="provider-icon shopify">
-                                        <i class="fab fa-shopify"></i>
-                                    </div>
-                                    <div class="provider-info">
-                                        <div class="provider-name">Shopify</div>
-                                        <% const shopifyAccount=connectedAccounts.find(a=> a.provider === 'shopify');
-                                            %>
-                                            <% if (shopifyAccount) { %>
-                                                <div class="provider-status provider-connected">
-                                                    <i class="fas fa-check-circle"></i>
+                                    <div class="card-body">
+                                        <div class="provider-icon-large shopify-icon">
+                                            <i class="fab fa-shopify"></i>
+                                        </div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                                            <div>
+                                                <h3 style="margin: 0; font-size: 1.5rem;">Shopify</h3>
+                                                <p class="text-muted" style="font-size: 0.85rem;">Optimize e-commerce
+                                                    reach</p>
+                                            </div>
+                                            <% const shopifyAccount=connectedAccounts.find(a=> a.provider ===
+                                                'shopify'); %>
+                                                <div class="badge <%= shopifyAccount ? 'badge-green' : 'badge-gray' %>">
+                                                    <span
+                                                        class="status-dot <%= shopifyAccount ? 'dot-active' : 'dot-inactive' %>"></span>
+                                                    <%= shopifyAccount ? 'Connected' : 'Disconnected' %>
+                                                </div>
+                                        </div>
+
+                                        <% if (shopifyAccount) { %>
+                                            <div
+                                                style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+                                                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">
                                                     <%= shopifyAccount.account_name %>
                                                 </div>
-                                                <% } else { %>
-                                                    <div class="provider-status">Not connected</div>
-                                                    <% } %>
+                                                <div
+                                                    style="font-size: 0.8rem; color: var(--text-light); font-family: monospace;">
+                                                    <%= shopifyAccount.account_url %>
+                                                </div>
+                                            </div>
+                                            <form action="/oauth/shopify/disconnect" method="POST">
+                                                <button type="submit" class="btn btn-secondary btn-sm"
+                                                    style="width: 100%; color: var(--danger);">Disconnect
+                                                    Platform</button>
+                                            </form>
+                                            <% } else { %>
+                                                <p class="text-muted mb-4" style="font-size: 0.9rem;">Sync product
+                                                    metadata and collection page SEO across your entire store.</p>
+                                                <a href="/oauth/shopify" class="btn btn-primary"
+                                                    style="width: 100%;">Connect Shopify</a>
+                                                <% } %>
                                     </div>
-                                    <% if (shopifyAccount) { %>
-                                        <form action="/oauth/shopify/disconnect" method="POST">
-                                            <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
-                                        </form>
-                                        <% } else { %>
-                                            <a href="/oauth/shopify" class="btn btn-primary btn-sm">Connect</a>
-                                            <% } %>
                                 </div>
                             </div>
 
                             <% if (connectedAccounts.length> 0) { %>
-                                <div class="card mt-4">
+                                <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Connection Details</h3>
+                                        <h3 class="card-title"><i class="fas fa-list-ul"></i> Connection Registry</h3>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
+                                    <div class="card-body" style="padding: 0;">
+                                        <div class="table-container" style="border: none;">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
                                                         <th>Platform</th>
-                                                        <th>Account</th>
-                                                        <th>URL</th>
-                                                        <th>Connected</th>
+                                                        <th>Account Name</th>
+                                                        <th>Target URL</th>
+                                                        <th>Synced Since</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <% connectedAccounts.forEach(function(account) { %>
                                                         <tr>
                                                             <td>
-                                                                <span
-                                                                    style="display: flex; align-items: center; gap: 8px;">
-                                                                    <i class="fab fa-<%= account.provider %>"></i>
-                                                                    <%= account.provider.charAt(0).toUpperCase() +
-                                                                        account.provider.slice(1) %>
-                                                                </span>
+                                                                <div
+                                                                    style="display: flex; align-items: center; gap: 12px;">
+                                                                    <div style="font-size: 1.25rem;">
+                                                                        <i class="fab fa-<%= account.provider %>"></i>
+                                                                    </div>
+                                                                    <span
+                                                                        style="font-weight: 600; text-transform: capitalize;">
+                                                                        <%= account.provider %>
+                                                                    </span>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <%= account.account_name %>
@@ -130,9 +260,9 @@
                                                             <td>
                                                                 <a href="<%= account.account_url %>" target="_blank"
                                                                     class="text-muted">
-                                                                    <%= account.account_url.length> 30 ?
-                                                                        account.account_url.substring(0, 30) + '...' :
-                                                                        account.account_url %>
+                                                                    <%= account.account_url %> <i
+                                                                            class="fas fa-external-link-alt"
+                                                                            style="font-size: 0.7rem; margin-left: 4px;"></i>
                                                                 </a>
                                                             </td>
                                                             <td class="text-muted">

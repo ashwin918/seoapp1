@@ -6,42 +6,53 @@
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header">
-                            <h1 class="page-title">Dashboard</h1>
-                            <p class="page-desc">Welcome back, <%= user.name %>
-                            </p>
+                        <div class="page-header mb-4"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h1 class="page-title" style="margin:0;">Dashboard</h1>
+                                <p class="text-muted">Welcome back, <strong>
+                                        <%= user.name %>
+                                    </strong>. Your SEO agents are active.</p>
+                            </div>
+                            <div class="date-badge badge badge-gray">
+                                <%= new Date().toLocaleDateString('en-US', { weekday: 'long' , year: 'numeric' ,
+                                    month: 'long' , day: 'numeric' }) %>
+                            </div>
                         </div>
 
                         <%- include('../partials/flash') %>
 
-                            <!-- Stats -->
                             <div class="stats-row">
                                 <div class="stat-box">
                                     <div class="stat-label">Websites</div>
                                     <div class="stat-value">
                                         <%= stats.websites %>
                                     </div>
+                                    <i class="fas fa-globe stat-icon"></i>
                                 </div>
 
                                 <div class="stat-box">
-                                    <div class="stat-label">Avg Score</div>
+                                    <div class="stat-label">Avg SEO Score</div>
                                     <div class="stat-value">
                                         <%= stats.avgScore %>
                                     </div>
+                                    <i class="fas fa-chart-line stat-icon"></i>
                                 </div>
 
                                 <div class="stat-box">
-                                    <div class="stat-label">Analyses</div>
+                                    <div class="stat-label">Analyses Run</div>
                                     <div class="stat-value">
                                         <%= stats.totalAnalyses %>
                                     </div>
+                                    <i class="fas fa-search stat-icon"></i>
                                 </div>
 
                                 <div class="stat-box">
-                                    <div class="stat-label">Connections</div>
+                                    <div class="stat-label">Connected Platforms</div>
                                     <div class="stat-value">
                                         <%= stats.connectedAccounts %>
                                     </div>
+                                    <i class="fas fa-plug stat-icon"></i>
                                 </div>
                             </div>
 
@@ -49,43 +60,60 @@
                                 <!-- Recent Analyses -->
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Recent Analyses</h3>
-                                        <a href="/analyze/history/all" class="btn btn-ghost btn-sm">View all</a>
+                                        <h3 class="card-title"><i class="fas fa-history"
+                                                style="color: var(--primary);"></i> Recent Reports</h3>
+                                        <a href="/analyze/history/all" class="btn btn-ghost btn-sm">View History</a>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body" style="padding: 0;">
                                         <% if (recentAnalyses.length===0) { %>
-                                            <div class="empty-state">
-                                                <div class="empty-icon"><i class="fas fa-search"></i></div>
-                                                <p class="empty-title">No analyses yet</p>
-                                                <a href="/analyze" class="btn btn-primary btn-sm mt-3">Analyze a URL</a>
+                                            <div class="text-center" style="padding: 60px 40px;">
+                                                <i class="fas fa-search-minus mb-3"
+                                                    style="font-size: 3rem; color: var(--text-light);"></i>
+                                                <p class="text-muted">No analyses found. Run your first check now.</p>
+                                                <a href="/analyze" class="btn btn-primary btn-sm mt-3">Start
+                                                    Analysis</a>
                                             </div>
                                             <% } else { %>
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>URL</th>
-                                                            <th>Score</th>
-                                                            <th>Date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% recentAnalyses.forEach(function(a) { %>
+                                                <div class="table-container" style="border: none;">
+                                                    <table class="table">
+                                                        <thead>
                                                             <tr>
-                                                                <td><a href="/analyze/<%= a.id %>">
-                                                                        <%= a.url.substring(0, 35) %>
-                                                                            <%= a.url.length> 35 ? '...' : '' %>
-                                                                    </a></td>
-                                                                <td><span
-                                                                        class="badge <%= a.overall_score >= 70 ? 'badge-green' : a.overall_score >= 50 ? 'badge-yellow' : 'badge-red' %>">
-                                                                        <%= a.overall_score %>%
-                                                                    </span></td>
-                                                                <td class="text-muted">
-                                                                    <%= new Date(a.analyzed_at).toLocaleDateString() %>
-                                                                </td>
+                                                                <th>Target URL</th>
+                                                                <th>Score</th>
+                                                                <th>Date</th>
                                                             </tr>
-                                                            <% }); %>
-                                                    </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% recentAnalyses.forEach(function(a) { %>
+                                                                <tr onclick="window.location='/analyze/<%= a.id %>'"
+                                                                    style="cursor: pointer;">
+                                                                    <td>
+                                                                        <div
+                                                                            style="display: flex; align-items: center; gap: 12px;">
+                                                                            <img src="https://www.google.com/s2/favicons?domain=<%= a.url %>"
+                                                                                style="width: 20px; height: 20px;">
+                                                                            <span style="font-weight: 600;">
+                                                                                <%= a.url.replace(/^https?:\/\//, ''
+                                                                                    ).substring(0, 25) %>
+                                                                                    <%= a.url.length> 25 ? '...' : '' %>
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span
+                                                                            class="badge <%= a.overall_score >= 80 ? 'badge-green' : a.overall_score >= 50 ? 'badge-yellow' : 'badge-red' %>">
+                                                                            <%= a.overall_score %>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-muted">
+                                                                        <%= new Date(a.analyzed_at).toLocaleDateString()
+                                                                            %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }); %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                                 <% } %>
                                     </div>
                                 </div>
@@ -93,53 +121,63 @@
                                 <!-- Connections -->
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Connections</h3>
-                                        <a href="/oauth" class="btn btn-ghost btn-sm">Manage</a>
+                                        <h3 class="card-title"><i class="fas fa-bolt" style="color: var(--accent);"></i>
+                                            Active Sync</h3>
+                                        <a href="/oauth" class="btn btn-ghost btn-sm">Management</a>
                                     </div>
                                     <div class="card-body">
                                         <% if (connectedAccounts.length===0) { %>
-                                            <div class="empty-state">
-                                                <div class="empty-icon"><i class="fas fa-plug"></i></div>
-                                                <p class="empty-title">No connections</p>
-                                                <a href="/oauth" class="btn btn-primary btn-sm mt-3">Connect a
-                                                    platform</a>
+                                            <div class="text-center" style="padding: 40px 20px;">
+                                                <i class="fas fa-unlink mb-3"
+                                                    style="font-size: 2.5rem; color: var(--text-light);"></i>
+                                                <p class="text-muted">No external platforms connected.</p>
+                                                <a href="/oauth" class="btn btn-secondary btn-sm mt-3">Link Website</a>
                                             </div>
                                             <% } else { %>
-                                                <% connectedAccounts.forEach(function(acc) { %>
-                                                    <div
-                                                        style="display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px;">
-                                                        <i class="fab fa-<%= acc.provider %>"
-                                                            style="font-size: 1.2rem; width: 24px;"></i>
-                                                        <div style="flex: 1;">
-                                                            <div style="font-weight: 500; font-size: 0.9rem;">
-                                                                <%= acc.account_name %>
+                                                <div style="display: flex; flex-direction: column; gap: 16px;">
+                                                    <% connectedAccounts.forEach(function(acc) { %>
+                                                        <div class="connection-item"
+                                                            style="display: flex; align-items: center; gap: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: var(--radius); border: 1px solid var(--border);">
+                                                            <div
+                                                                style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg-body); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                                                <i
+                                                                    class="fab fa-<%= acc.provider === 'wordpress' ? 'wordpress' : acc.provider === 'shopify' ? 'shopify' : 'github' %>"></i>
                                                             </div>
-                                                            <div class="text-muted" style="font-size: 0.8rem;">
-                                                                <%= acc.provider %>
+                                                            <div style="flex: 1;">
+                                                                <div style="font-weight: 700; font-size: 1rem;">
+                                                                    <%= acc.account_name %>
+                                                                </div>
+                                                                <div class="text-muted"
+                                                                    style="font-size: 0.8rem; text-transform: capitalize;">
+                                                                    <%= acc.provider %> connected
+                                                                </div>
                                                             </div>
+                                                            <span class="badge badge-green"><i
+                                                                    class="fas fa-sync fa-spin"
+                                                                    style="margin-right: 6px; font-size: 0.7rem;"></i>
+                                                                Syncing</span>
                                                         </div>
-                                                        <span class="badge badge-green">Connected</span>
-                                                    </div>
-                                                    <% }); %>
-                                                        <% } %>
+                                                        <% }); %>
+                                                </div>
+                                                <% } %>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Quick Actions -->
-                            <div class="card mt-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Quick Actions</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div style="display: flex; gap: 12px;">
-                                        <a href="/analyze" class="btn btn-primary"><i class="fas fa-search"></i> Analyze
-                                            URL</a>
-                                        <a href="/websites/add" class="btn btn-secondary"><i class="fas fa-plus"></i>
-                                            Add Website</a>
-                                        <a href="/oauth" class="btn btn-secondary"><i class="fas fa-plug"></i> Connect
-                                            Platform</a>
+                            <div class="card mt-4"
+                                style="background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; color: white;">
+                                <div class="card-body"
+                                    style="display: flex; align-items: center; justify-content: space-between; padding: 48px;">
+                                    <div style="max-width: 600px;">
+                                        <h2 style="color: white; margin-bottom: 12px; font-size: 2rem;">Unleash the
+                                            Power of AI</h2>
+                                        <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">Run a deep analysis
+                                            on your secondary sites or track competitor movements to gain the edge.</p>
                                     </div>
+                                    <a href="/analyze" class="btn btn-lg"
+                                        style="background: white; color: var(--primary); font-weight: 800; border-radius: var(--radius-pill);">
+                                        <i class="fas fa-search"></i> New Report
+                                    </a>
                                 </div>
                             </div>
                     </main>

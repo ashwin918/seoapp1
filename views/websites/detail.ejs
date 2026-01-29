@@ -6,221 +6,187 @@
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header"
-                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="page-header mb-4"
+                            style="display: flex; justify-content: space-between; align-items: flex-end;">
                             <div>
-                                <h1 class="page-title">
+                                <nav class="breadcrumb mb-1" style="font-size: 0.8rem; color: var(--text-light);">
+                                    <a href="/websites" style="color: inherit;">Fleet</a> / <span
+                                        style="color: var(--primary);">Details</span>
+                                </nav>
+                                <h1 class="page-title" style="margin: 0;">
                                     <%= website.name %>
                                 </h1>
-                                <p class="page-description">
-                                    <a href="<%= website.url %>" target="_blank">
-                                        <%= website.url %>
-                                            <i class="fas fa-external-link-alt"></i>
-                                    </a>
+                                <p class="text-muted">
+                                    <%= website.url %>
                                 </p>
                             </div>
-                            <div style="display: flex; gap: 0.5rem;">
+                            <div style="display: flex; gap: 12px;">
                                 <form action="/analyze" method="POST">
                                     <input type="hidden" name="url" value="<%= website.url %>">
                                     <input type="hidden" name="websiteId" value="<%= website.id %>">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-search"></i>
-                                        Analyze Now
-                                    </button>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-radar"></i> Deploy
+                                        Audit</button>
                                 </form>
-                                <a href="/seo/edit/<%= website.id %>" class="btn btn-secondary">
-                                    <i class="fas fa-edit"></i>
-                                    Edit SEO
-                                </a>
+                                <a href="/seo/edit/<%= website.id %>" class="btn btn-secondary"><i
+                                        class="fas fa-pen"></i> Edit SEO</a>
                             </div>
                         </div>
 
                         <%- include('../partials/flash') %>
 
-                            <!-- Website Info -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Website Information</h3>
+                            <div class="stats-row">
+                                <div class="stat-box">
+                                    <div class="stat-label">Crawl Status</div>
+                                    <div class="stat-value"
+                                        style="font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                                        <i class="fas fa-circle" style="color: var(--success); font-size: 0.8rem;"></i>
+                                        Health Good
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;">
-                                        <div>
-                                            <div class="text-muted" style="font-size: 0.875rem;">Platform</div>
-                                            <div style="font-weight: 600;">
-                                                <%= website.platform || 'Not specified' %>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted" style="font-size: 0.875rem;">Connected Account</div>
-                                            <div style="font-weight: 600;">
-                                                <% if (website.provider) { %>
-                                                    <i class="fab fa-<%= website.provider %>"></i>
-                                                    <%= website.account_name %>
-                                                        <% } else { %>
-                                                            Not connected
-                                                            <% } %>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted" style="font-size: 0.875rem;">Added On</div>
-                                            <div style="font-weight: 600;">
-                                                <%= new Date(website.created_at).toLocaleDateString() %>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted" style="font-size: 0.875rem;">Last Analyzed</div>
-                                            <div style="font-weight: 600;">
-                                                <%= website.last_analyzed ? new
-                                                    Date(website.last_analyzed).toLocaleDateString() : 'Never' %>
-                                            </div>
-                                        </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Platform</div>
+                                    <div class="stat-value" style="font-size: 1.5rem;">
+                                        <%= website.platform || 'General' %>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Connection</div>
+                                    <div class="stat-value" style="font-size: 1.5rem;">
+                                        <% if (website.provider) { %>
+                                            <i class="fab fa-<%= website.provider %>"></i>
+                                            <%= website.provider %>
+                                                <% } else { %>
+                                                    Standalone
+                                                    <% } %>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Latest Score</div>
+                                    <div class="stat-value" style="color: var(--primary);">
+                                        <%= website.latest_score || '--' %>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Recent Analyses -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Recent Analyses</h3>
-                                </div>
-                                <div class="card-body">
-                                    <% if (analyses.length===0) { %>
-                                        <div class="empty-state" style="padding: 2rem;">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-search"></i>
-                                            </div>
-                                            <p class="empty-title">No analyses yet</p>
-                                            <p class="empty-description">Run an analysis to see results here.</p>
-                                        </div>
-                                        <% } else { %>
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Score</th>
-                                                            <th>Title</th>
-                                                            <th>Meta</th>
-                                                            <th>Content</th>
-                                                            <th>Technical</th>
-                                                            <th>Date</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% analyses.forEach(function(analysis) { %>
-                                                            <tr>
-                                                                <td>
-                                                                    <span
-                                                                        class="badge <%= analysis.overall_score >= 80 ? 'badge-success' : analysis.overall_score >= 60 ? 'badge-warning' : 'badge-danger' %>">
-                                                                        <%= analysis.overall_score %>%
-                                                                    </span>
-                                                                </td>
-                                                                <td>
-                                                                    <%= analysis.title_score %>%
-                                                                </td>
-                                                                <td>
-                                                                    <%= analysis.meta_score %>%
-                                                                </td>
-                                                                <td>
-                                                                    <%= analysis.content_score %>%
-                                                                </td>
-                                                                <td>
-                                                                    <%= analysis.technical_score %>%
-                                                                </td>
-                                                                <td class="text-muted">
-                                                                    <%= new
-                                                                        Date(analysis.analyzed_at).toLocaleDateString()
-                                                                        %>
-                                                                </td>
-                                                                <td>
-                                                                    <a href="/analyze/<%= analysis.id %>"
-                                                                        class="btn btn-secondary btn-sm">
-                                                                        <i class="fas fa-eye"></i>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                            <% }); %>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <% } %>
-                                </div>
-                            </div>
-
-                            <!-- Recent Edits -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Recent SEO Edits</h3>
-                                    <a href="/seo/history/<%= website.id %>" class="btn btn-secondary btn-sm">View
-                                        All</a>
-                                </div>
-                                <div class="card-body">
-                                    <% if (edits.length===0) { %>
-                                        <div class="empty-state" style="padding: 2rem;">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-edit"></i>
-                                            </div>
-                                            <p class="empty-title">No edits yet</p>
-                                            <p class="empty-description">Make SEO changes to see them here.</p>
-                                        </div>
-                                        <% } else { %>
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Field</th>
-                                                            <th>Status</th>
-                                                            <th>Date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% edits.forEach(function(edit) { %>
-                                                            <tr>
-                                                                <td>
-                                                                    <%= edit.field_type %>
-                                                                </td>
-                                                                <td>
-                                                                    <span
-                                                                        class="badge <%= edit.status === 'applied' ? 'badge-success' : edit.status === 'pending' ? 'badge-warning' : 'badge-neutral' %>">
-                                                                        <%= edit.status %>
-                                                                    </span>
-                                                                </td>
-                                                                <td class="text-muted">
-                                                                    <%= new Date(edit.created_at).toLocaleDateString()
-                                                                        %>
-                                                                </td>
-                                                            </tr>
-                                                            <% }); %>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <% } %>
-                                </div>
-                            </div>
-
-                            <!-- Danger Zone -->
-                            <div class="card" style="border-color: rgba(239, 68, 68, 0.3);">
-                                <div class="card-header">
-                                    <h3 class="card-title" style="color: var(--danger);">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        Danger Zone
-                                    </h3>
-                                </div>
-                                <div class="card-body">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <div style="font-weight: 600;">Delete this website</div>
-                                            <div class="text-muted">Once deleted, all data associated with this website
-                                                will be permanently removed.</div>
-                                        </div>
-                                        <form action="/websites/<%= website.id %>/delete" method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this website? This action cannot be undone.');">
-                                            <button type="submit" class="btn btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                                Delete Website
-                                            </button>
-                                        </form>
+                            <div class="grid-2">
+                                <!-- Historical Reports -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><i class="fas fa-history"></i> Audit Archive</h3>
                                     </div>
+                                    <div class="card-body" style="padding: 0;">
+                                        <% if (analyses.length===0) { %>
+                                            <div class="text-center" style="padding: 60px;">
+                                                <i class="fas fa-file-invoice mb-3"
+                                                    style="font-size: 2.5rem; opacity: 0.1;"></i>
+                                                <p class="text-muted">No audit logs found for this deployment.</p>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="table-container" style="border: none;">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Score</th>
+                                                                <th>Date</th>
+                                                                <th class="text-right">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% analyses.forEach(function(a) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <span
+                                                                            class="badge <%= a.overall_score >= 80 ? 'badge-green' : 'badge-yellow' %>">
+                                                                            <%= a.overall_score %>%
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-muted">
+                                                                        <%= new Date(a.analyzed_at).toLocaleDateString()
+                                                                            %>
+                                                                    </td>
+                                                                    <td class="text-right">
+                                                                        <a href="/analyze/<%= a.id %>"
+                                                                            class="btn btn-ghost btn-sm">Details</a>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }); %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- Deployment History -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><i class="fas fa-code-branch"></i> Deployment History
+                                        </h3>
+                                        <a href="/seo/history/<%= website.id %>" class="btn btn-ghost btn-sm">Full
+                                            log</a>
+                                    </div>
+                                    <div class="card-body" style="padding: 0;">
+                                        <% if (edits.length===0) { %>
+                                            <div class="text-center" style="padding: 60px;">
+                                                <i class="fas fa-layer-group mb-3"
+                                                    style="font-size: 2.5rem; opacity: 0.1;"></i>
+                                                <p class="text-muted">No live deployments yet.</p>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="table-container" style="border: none;">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Field</th>
+                                                                <th>Status</th>
+                                                                <th>Timestamp</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% edits.forEach(function(edit) { %>
+                                                                <tr>
+                                                                    <td
+                                                                        style="font-weight: 600; text-transform: capitalize;">
+                                                                        <%= edit.field_type %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span
+                                                                            class="badge <%= edit.status === 'applied' ? 'badge-blue' : 'badge-yellow' %>">
+                                                                            <%= edit.status %>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-muted">
+                                                                        <%= new
+                                                                            Date(edit.created_at).toLocaleDateString()
+                                                                            %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }); %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card mt-4"
+                                style="border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02);">
+                                <div class="card-body"
+                                    style="display: flex; justify-content: space-between; align-items: center; padding: 32px;">
+                                    <div>
+                                        <h3 style="color: var(--danger); margin-bottom: 4px;">Decommission Deployment
+                                        </h3>
+                                        <p class="text-muted" style="margin: 0;">Remove this website and all associated
+                                            intelligence profiles. This cannot be undone.</p>
+                                    </div>
+                                    <form action="/websites/<%= website.id %>/delete" method="POST"
+                                        onsubmit="return confirm('Confirm total decommissioning of this website repository?');">
+                                        <button type="submit" class="btn btn-secondary"
+                                            style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">
+                                            <i class="fas fa-trash"></i> Destroy Instance
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                     </main>

@@ -1,4 +1,4 @@
-<% const title='Analysis History' ; const active='history' ; %>
+<% const title='Audit Logs' ; const active='history' ; %>
     <%- include('../partials/head') %>
         <%- include('../partials/navbar') %>
 
@@ -6,86 +6,89 @@
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header">
-                            <h1 class="page-title">Analysis History</h1>
-                            <p class="page-description">View all your previous SEO analyses.</p>
+                        <div class="page-header mb-4"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h1 class="page-title">Intelligence Logs</h1>
+                                <p class="text-muted">History of all agent-driven audits across your ecosystem.</p>
+                            </div>
+                            <a href="/analyze" class="btn btn-primary">
+                                <i class="fas fa-radar"></i> New Audit
+                            </a>
                         </div>
 
                         <%- include('../partials/flash') %>
 
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">All Analyses</h3>
-                                    <a href="/analyze" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus"></i>
-                                        New Analysis
-                                    </a>
+                                    <h3 class="card-title"><i class="fas fa-history" style="color: var(--primary);"></i>
+                                        Audit Archive</h3>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" style="padding: 0;">
                                     <% if (analyses.length===0) { %>
-                                        <div class="empty-state">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-history"></i>
-                                            </div>
-                                            <p class="empty-title">No analyses yet</p>
-                                            <p class="empty-description">Start by analyzing a URL to see your history
-                                                here.</p>
-                                            <a href="/analyze" class="btn btn-primary">Analyze URL</a>
+                                        <div class="text-center" style="padding: 100px 40px;">
+                                            <i class="fas fa-clipboard-list mb-3"
+                                                style="font-size: 3.5rem; opacity: 0.1;"></i>
+                                            <h2>Archive is Empty</h2>
+                                            <p class="text-muted mb-4">No audit logs have been generated yet. Deploy an
+                                                agent to start tracking SEO performance.</p>
+                                            <a href="/analyze" class="btn btn-primary btn-lg">Deploy Agent</a>
                                         </div>
                                         <% } else { %>
-                                            <div class="table-responsive">
+                                            <div class="table-container" style="border: none;">
                                                 <table class="table">
                                                     <thead>
                                                         <tr>
-                                                            <th>URL</th>
-                                                            <th>Score</th>
-                                                            <th>Title Score</th>
-                                                            <th>Meta Score</th>
-                                                            <th>Content Score</th>
-                                                            <th>Date</th>
-                                                            <th>Actions</th>
+                                                            <th>Target URL</th>
+                                                            <th>Overall</th>
+                                                            <th>Structure</th>
+                                                            <th>Content</th>
+                                                            <th>Technical</th>
+                                                            <th>Timestamp</th>
+                                                            <th class="text-right">Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <% analyses.forEach(function(analysis) { %>
+                                                        <% analyses.forEach(function(a) { %>
                                                             <tr>
                                                                 <td>
-                                                                    <a href="/analyze/<%= analysis.id %>"
-                                                                        style="display: flex; align-items: center; gap: 0.5rem;">
-                                                                        <i class="fas fa-globe"
-                                                                            style="color: var(--primary-400);"></i>
-                                                                        <%= analysis.url.length> 40 ?
-                                                                            analysis.url.substring(0, 40) + '...' :
-                                                                            analysis.url %>
-                                                                    </a>
+                                                                    <div
+                                                                        style="display: flex; align-items: center; gap: 12px;">
+                                                                        <div class="brand-icon"
+                                                                            style="width: 32px; height: 32px; border-radius: 8px; font-size: 0.9rem;">
+                                                                            <i class="fas fa-globe"></i>
+                                                                        </div>
+                                                                        <span style="font-weight: 600;">
+                                                                            <%= a.url.replace(/^https?:\/\//, ''
+                                                                                ).substring(0, 30) %>
+                                                                                <%= a.url.length> 30 ? '...' : '' %>
+                                                                        </span>
+                                                                    </div>
                                                                 </td>
                                                                 <td>
                                                                     <span
-                                                                        class="badge <%= analysis.overall_score >= 80 ? 'badge-success' : analysis.overall_score >= 60 ? 'badge-warning' : 'badge-danger' %>">
-                                                                        <%= analysis.overall_score %>%
+                                                                        class="badge <%= a.overall_score >= 80 ? 'badge-green' : a.overall_score >= 50 ? 'badge-yellow' : 'badge-red' %>">
+                                                                        <%= a.overall_score %>%
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <%= analysis.title_score %>%
+                                                                    <%= a.title_score %>%
                                                                 </td>
                                                                 <td>
-                                                                    <%= analysis.meta_score %>%
+                                                                    <%= a.content_score %>%
                                                                 </td>
                                                                 <td>
-                                                                    <%= analysis.content_score %>%
+                                                                    <%= a.technical_score %>%
                                                                 </td>
                                                                 <td class="text-muted">
                                                                     <%= new
-                                                                        Date(analysis.analyzed_at).toLocaleDateString('en-US',
+                                                                        Date(a.analyzed_at).toLocaleDateString('en-US',
                                                                         { month: 'short' , day: 'numeric' ,
                                                                         year: 'numeric' }) %>
                                                                 </td>
-                                                                <td>
-                                                                    <a href="/analyze/<%= analysis.id %>"
-                                                                        class="btn btn-secondary btn-sm">
-                                                                        <i class="fas fa-eye"></i>
-                                                                        View
-                                                                    </a>
+                                                                <td class="text-right">
+                                                                    <a href="/analyze/<%= a.id %>"
+                                                                        class="btn btn-secondary btn-sm">Report</a>
                                                                 </td>
                                                             </tr>
                                                             <% }); %>

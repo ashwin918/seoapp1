@@ -1,4 +1,4 @@
-<% const title='Websites' ; const active='websites' ; %>
+<% const title='My Fleet' ; const active='websites' ; %>
     <%- include('../partials/head') %>
         <%- include('../partials/navbar') %>
 
@@ -6,116 +6,97 @@
                 <%- include('../partials/sidebar') %>
 
                     <main class="main-content">
-                        <div class="page-header"
+                        <div class="page-header mb-4"
                             style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h1 class="page-title">My Websites</h1>
-                                <p class="page-description">Manage and monitor your connected websites.</p>
+                                <h1 class="page-title">Website Fleet</h1>
+                                <p class="text-muted">Manage your active deployments and SEO monitoring agents.</p>
                             </div>
                             <a href="/websites/add" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                Add Website
+                                <i class="fas fa-plus"></i> Add Repository
                             </a>
                         </div>
 
                         <%- include('../partials/flash') %>
 
                             <% if (websites.length===0) { %>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">
-                                                <i class="fas fa-globe"></i>
-                                            </div>
-                                            <p class="empty-title">No websites yet</p>
-                                            <p class="empty-description">Add your first website to start tracking its
-                                                SEO performance.</p>
-                                            <a href="/websites/add" class="btn btn-primary">
-                                                <i class="fas fa-plus"></i>
-                                                Add Website
-                                            </a>
-                                        </div>
+                                <div class="card" style="padding: 80px 40px; text-align: center;">
+                                    <div class="feature-icon"
+                                        style="margin: 0 auto 32px; width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fas fa-globe"></i>
                                     </div>
+                                    <h2>Zero Deployments</h2>
+                                    <p class="text-muted mb-4" style="max-width: 500px; margin: 0 auto 32px;">Connect
+                                        your first website to enable autonomous SEO monitoring and agent-driven
+                                        optimization.</p>
+                                    <a href="/websites/add" class="btn btn-primary btn-lg">Deploy First Agent</a>
                                 </div>
                                 <% } else { %>
-                                    <div
-                                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                                    <div class="grid-2">
                                         <% websites.forEach(function(website) { %>
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div
-                                                        style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
-                                                        <div
-                                                            style="width: 48px; height: 48px; border-radius: var(--border-radius); background: var(--accent-gradient); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; flex-shrink: 0;">
+                                                        style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
+                                                        <div class="brand-icon"
+                                                            style="width: 56px; height: 56px; border-radius: 16px; font-size: 1.5rem; background: var(--bg-body); border: 1px solid var(--border);">
                                                             <i class="fas fa-globe"></i>
                                                         </div>
                                                         <div style="flex: 1; min-width: 0;">
-                                                            <h4
-                                                                style="margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                            <h3 style="margin: 0; font-size: 1.25rem;">
                                                                 <%= website.name %>
-                                                            </h4>
-                                                            <a href="<%= website.url %>" target="_blank"
-                                                                class="text-muted"
-                                                                style="font-size: 0.875rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                                <%= website.url %>
-                                                                    <i class="fas fa-external-link-alt"
-                                                                        style="margin-left: 0.25rem;"></i>
-                                                            </a>
+                                                            </h3>
+                                                            <div class="text-muted"
+                                                                style="font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                                                <%= website.url %> <i class="fas fa-external-link-alt"
+                                                                        style="font-size: 0.7rem;"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="score-mini text-center">
+                                                            <div
+                                                                style="font-size: 1.5rem; font-weight: 800; color: <%= website.latest_score >= 80 ? 'var(--success)' : 'var(--warning)' %>">
+                                                                <%= website.latest_score || '--' %><span
+                                                                        style="font-size: 0.8rem;">%</span>
+                                                            </div>
+                                                            <div
+                                                                style="font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: var(--text-light);">
+                                                                Score</div>
                                                         </div>
                                                     </div>
 
-                                                    <div
-                                                        style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                                                    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
                                                         <% if (website.provider) { %>
-                                                            <span class="badge badge-info">
-                                                                <i class="fab fa-<%= website.provider %>"></i>
-                                                                <%= website.provider.charAt(0).toUpperCase() +
-                                                                    website.provider.slice(1) %>
+                                                            <span class="badge badge-blue"><i
+                                                                    class="fab fa-<%= website.provider %>"
+                                                                    style="margin-right: 6px;"></i>
+                                                                <%= website.provider %>
                                                             </span>
                                                             <% } %>
                                                                 <% if (website.platform) { %>
-                                                                    <span class="badge badge-neutral">
+                                                                    <span class="badge badge-gray">
                                                                         <%= website.platform %>
                                                                     </span>
                                                                     <% } %>
-                                                                        <% if (website.latest_score) { %>
-                                                                            <span
-                                                                                class="badge <%= website.latest_score >= 80 ? 'badge-success' : website.latest_score >= 60 ? 'badge-warning' : 'badge-danger' %>">
-                                                                                Score: <%= website.latest_score %>%
-                                                                            </span>
-                                                                            <% } %>
+                                                                        <span
+                                                                            class="badge <%= website.last_analyzed ? 'badge-green' : 'badge-yellow' %>">
+                                                                            <%= website.last_analyzed ? 'Active'
+                                                                                : 'Stale' %>
+                                                                        </span>
                                                     </div>
 
-                                                    <div class="text-muted"
-                                                        style="font-size: 0.875rem; margin-bottom: 1rem;">
-                                                        <% if (website.last_analyzed) { %>
-                                                            Last analyzed: <%= new
-                                                                Date(website.last_analyzed).toLocaleDateString() %>
-                                                                <% } else { %>
-                                                                    Not analyzed yet
-                                                                    <% } %>
-                                                    </div>
-
-                                                    <div style="display: flex; gap: 0.5rem;">
+                                                    <div
+                                                        style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
                                                         <a href="/websites/<%= website.id %>"
-                                                            class="btn btn-secondary btn-sm" style="flex: 1;">
-                                                            <i class="fas fa-eye"></i>
-                                                            View
-                                                        </a>
-                                                        <form action="/analyze" method="POST" style="flex: 1;">
+                                                            class="btn btn-secondary btn-sm">Overview</a>
+                                                        <a href="/seo/edit/<%= website.id %>"
+                                                            class="btn btn-secondary btn-sm">Editor</a>
+                                                        <form action="/analyze" method="POST" style="margin: 0;">
                                                             <input type="hidden" name="url" value="<%= website.url %>">
                                                             <input type="hidden" name="websiteId"
                                                                 value="<%= website.id %>">
                                                             <button type="submit" class="btn btn-primary btn-sm"
-                                                                style="width: 100%;">
-                                                                <i class="fas fa-search"></i>
-                                                                Analyze
-                                                            </button>
+                                                                style="width: 100%;">Audit</button>
                                                         </form>
-                                                        <a href="/seo/edit/<%= website.id %>"
-                                                            class="btn btn-secondary btn-sm">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
