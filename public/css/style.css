@@ -525,6 +525,7 @@ h3 {
     margin-bottom: 24px;
     background: linear-gradient(to right, #fff 20%, var(--primary) 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: fadeInUp 1s ease-out;
 }
@@ -542,6 +543,162 @@ h3 {
     justify-content: center;
     gap: 20px;
     animation: fadeInUp 1s ease-out 0.4s backwards;
+}
+
+/* Hero Visual Animation */
+.hero-visual {
+    margin-top: 80px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+
+.ai-engine {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.core-orb {
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at 30% 30%, var(--primary), var(--accent));
+    border-radius: 50%;
+    filter: blur(2px);
+    box-shadow: 0 0 50px var(--primary), 0 0 100px var(--accent);
+    animation: enginePulse 3s infinite ease-in-out;
+    z-index: 5;
+}
+
+.energy-rings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    border-radius: 50%;
+}
+
+.ring:nth-child(1) {
+    width: 180px;
+    height: 180px;
+    border-top: 2px solid var(--primary);
+    animation: ringRotate 10s infinite linear;
+}
+
+.ring:nth-child(2) {
+    width: 240px;
+    height: 240px;
+    border-right: 2px solid var(--accent);
+    animation: ringRotate 15s infinite linear reverse;
+}
+
+.ring:nth-child(3) {
+    width: 300px;
+    height: 300px;
+    border-bottom: 2px solid var(--primary);
+    animation: ringRotate 20s infinite linear;
+}
+
+.data-particles .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: particleFloat 5s infinite ease-in-out;
+}
+
+.particle:nth-child(1) {
+    top: 10%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 30%;
+    right: 10%;
+    animation-delay: 1s;
+    background: var(--accent);
+}
+
+.particle:nth-child(3) {
+    bottom: 20%;
+    left: 15%;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(4) {
+    bottom: 40%;
+    right: 25%;
+    animation-delay: 3s;
+    background: var(--accent);
+}
+
+.particle:nth-child(5) {
+    top: 70%;
+    left: 80%;
+    animation-delay: 1.5s;
+}
+
+.particle:nth-child(6) {
+    bottom: 10%;
+    right: 50%;
+    animation-delay: 0.5s;
+    background: var(--success);
+}
+
+@keyframes enginePulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: blur(2px);
+        box-shadow: 0 0 50px var(--primary), 0 0 100px var(--accent);
+    }
+
+    50% {
+        transform: scale(1.1);
+        filter: blur(5px);
+        box-shadow: 0 0 80px var(--primary), 0 0 150px var(--accent);
+    }
+}
+
+@keyframes ringRotate {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateY(-30px) translateX(20px);
+        opacity: 1;
+    }
 }
 
 /* Features */
