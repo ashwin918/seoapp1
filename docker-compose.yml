@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    container_name: seoapp-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    restart: always
+
+  postgres:
+    image: postgres:15
+    container_name: seoapp-postgres
+    environment:
+      POSTGRES_DB: seobot1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ashwin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
