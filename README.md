@@ -1,4 +1,4 @@
-# SEO Bot 🤖 bert bert technology
+# SEO Bot 🤖 bert bharath 
 
 A powerful SEO analysis and management web application built with Node.js, Express, PostgreSQL, and session authentication.
 
