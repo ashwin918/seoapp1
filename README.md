@@ -16,7 +16,7 @@ A powerful SEO analysis and management web application built with Node.js, Expre
 - **Backend**: Node.js, Express.js
 - **Database**: PostgreSQL
 - **Template Engine**: EJS
-- **Session**: express-session with connect-pg-simple
+- **Session**: express-session with connect-pg-simple.....
 - **Styling**: Custom CSS with modern design system
 
 ## Prerequisites
