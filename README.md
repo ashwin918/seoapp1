@@ -2,7 +2,7 @@
 
 A powerful SEO analysis and management web application built with Node.js, Express, PostgreSQL, and session authentication.
 
-## Features
+## Features.................................................................................................................
 
 - **🔍 SEO Analysis**: Analyze any URL and get comprehensive SEO scores and recommendations
 - **📊 Score Tracking**: Track your website's SEO performance over time
