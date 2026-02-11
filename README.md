@@ -4,7 +4,7 @@ A powerful SEO analysis and management web application built with Node.js, Expre
 
 ## Features.................................................................................................................
 
-- **🔍 SEO Analysis**: Analyze any URL and get comprehensive SEO scores and recommendations
+- **🔍 SEO Analysis**: Analyze any URL and get comprehensive SEO scores and recommendationsll
 - **📊 Score Tracking**: Track your website's SEO performance over time
 - **🔗 Platform Connections**: Connect GitHub, WordPress, and Shopify (demo OAuth)
 - **✏️ SEO Editing**: Make and manage SEO changes directly from the dashboard
